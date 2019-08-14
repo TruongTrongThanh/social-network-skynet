@@ -1,18 +1,18 @@
 <template>
   <div class="entry container">
-    <h1 class="title mt-5">Chào mừng bạn đến mạng xã hội SKYNET</h1>
-    <h2 class="sub-text">Mạng xã hội dành cho lập trình viên</h2>
-    <loginForm/>
+    <h1 class="title font-weight-bold mt-5">Chào mừng bạn đến mạng xã hội SKYNET</h1>
+    <h2 class="sub-text font-weight-light">Mạng xã hội dành cho lập trình viên</h2>
+    <EntryForm/>
   </div>
 </template>
 
 <script lang="ts">
 import { Vue, Component } from 'vue-property-decorator'
-import LoginForm from '@/components/LoginForm.vue'
+import EntryForm from '@/components/EntryForm.vue'
 
 @Component({
   components: {
-    LoginForm
+    EntryForm
   }
 })
 export default class Entry extends Vue {}
@@ -23,12 +23,8 @@ export default class Entry extends Vue {}
     text-align: center;
     color: white;
 
-    .title {
-      font-weight: bold;
-    }
-
     .sub-text {
-      color: #8f8f8f;
+      color: #b3b3b3;
     }
   }
 </style>
