@@ -1,7 +1,7 @@
 <template>
   <div class="login-form">
     <input class="mt-4 mb-2" type="text" placeholder="Email của bạn">
-    <input class="mb-3" type="text" placeholder="Mật khẩu">
+    <input class="mb-3" type="password" placeholder="Mật khẩu">
     <button class="btn btn-success mb-5">Đăng nhập</button>
   </div>
 </template>

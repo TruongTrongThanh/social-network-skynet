@@ -4,7 +4,8 @@
       <span 
         @click="mode = 0"
         :class="{ selected: mode === 0 }"
-        class="switch-btn mr-3 clickable">
+        class="switch-btn mr-3 clickable"
+      >
         Đăng nhập
       </span>
       <span
@@ -17,7 +18,11 @@
     </div>
     <login-form v-if="mode === 0"/>
     <register-form v-if="mode === 1"/>
-    <div class="forgot-pass clickable">
+    <forget-form v-if="mode === 2"/>
+    <div
+      class="forgot-pass clickable"
+      @click="mode = 2"
+    >
       Quên mật khẩu?
     </div>
   </div>
@@ -27,11 +32,13 @@
 import { Vue, Component } from 'vue-property-decorator'
 import LoginForm from '@/components/LoginForm.vue'
 import RegisterForm from '@/components/RegisterForm.vue'
+import ForgetForm from '@/components/ForgetForm.vue'
 
 @Component({
   components: {
     LoginForm,
-    RegisterForm
+    RegisterForm,
+    ForgetForm
   }
 })
 export default class EntryForm extends Vue {

@@ -9,6 +9,11 @@ export default new Router({
   routes: [
     {
       path: '/',
+      name: 'home',
+      component: () => import('./views/Home.vue')
+    },
+    {
+      path: '/entry',
       name: 'entry',
       component: () => import('./views/Entry.vue')
     }

@@ -15,7 +15,11 @@ import EntryForm from '@/components/EntryForm.vue'
     EntryForm
   }
 })
-export default class Entry extends Vue {}
+export default class Entry extends Vue {
+  mounted() {
+    document.body.style.backgroundColor = 'gray'
+  }
+}
 </script>
 
 <style scoped lang="scss">
