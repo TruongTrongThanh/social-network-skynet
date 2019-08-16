@@ -5,12 +5,11 @@ Vue.use(Vuex)
 
 export default new Vuex.Store({
   state: {
-
+    sidebarDisplay: false
   },
   mutations: {
-
-  },
-  actions: {
-
+    sidebarToggle(state) {
+      state.sidebarDisplay = !state.sidebarDisplay
+    }
   }
 })
