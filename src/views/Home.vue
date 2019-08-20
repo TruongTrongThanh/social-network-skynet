@@ -2,7 +2,16 @@
   <main-layout>
     <div class="home">
       <div class="row justify-content-center">
-        <div class="feed col-md-6 mr-5">this is feed</div>
+        <div class="feed-list col-md-6 mr-5">
+          <Feed
+            avatar="https://www.w3schools.com/howto/img_avatar.png"
+            original-poster="Thanh2111"
+            content="this is content feed..."
+            :like="50"
+            :dislike="20"
+            :share="10"
+          />
+        </div>
         <div class="other col-md-3">this is notif, action,...</div>
       </div>
     </div>
@@ -12,10 +21,12 @@
 <script lang="ts">
 import { Vue, Component } from 'vue-property-decorator'
 import MainLayout from '@/layouts/MainLayout.vue'
+import Feed from '@/components/Feed.vue'
 
 @Component({
   components: {
-    MainLayout
+    MainLayout,
+    Feed
   }
 })
 export default class Home extends Vue {}
@@ -25,9 +36,6 @@ export default class Home extends Vue {}
 .home {
   margin-top: 80px;
 
-  .feed {
-    background-color: red;
-  }
   .other {
     background-color: green;
   }
