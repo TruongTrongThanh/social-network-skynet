@@ -7,8 +7,9 @@
             avatar="https://www.w3schools.com/howto/img_avatar.png"
             original-poster="Thanh2111"
             content="this is content feed..."
-            :like="50"
-            :dislike="20"
+            :initVoteState="1"
+            :upvote="51"
+            :downvote="20"
             :share="10"
           />
         </div>
@@ -29,7 +30,11 @@ import Feed from '@/components/Feed.vue'
     Feed
   }
 })
-export default class Home extends Vue {}
+export default class Home extends Vue {
+  mounted() {
+    document.body.style.backgroundColor = '#eaeaea'
+  }
+}
 </script>
 
 <style scoped lang="scss">
