@@ -2,13 +2,13 @@
   <div class="feed rounded container-fluid">
     <div class="title rounded-top row justify-content-between align-items-center py-2">
       <div class="col-4">
-        <img :src="avatar" class="mr-2" width="30">
-        <span>{{ originalPoster }}</span>
+        <img :src="feed.originalPoster.avatar" class="mr-2" width="30">
+        <span>{{ feed.originalPoster.fullname }}</span>
       </div>
-      <div class="time col-4 text-right">Posted 30 minutes ago</div>
+      <div class="time col-4 text-right">Posted {{ calcTime }} ago</div>
     </div>
     <div class="content row">
-      {{ content }}
+      {{ feed.content }}
     </div>
     <div class="footer row rounded-bottom justify-content-center align-items-center">
       <div class="col-5">
@@ -19,17 +19,17 @@
               class="icon arrow rotate-180 clickable mr-1"
               @click="voteState = voteState === 1 ? 2 : 1"
             />
-            <span :class="{ 'upvote-color': voteState === 1 }">{{ upvote }}</span>
+            <span :class="{ 'upvote-color': voteState === 1 }">{{ feed.upvote }}</span>
           </div>
           <div class="col-6 ratio-bar position-relative">
             <div class="ratio-bar-upvote position-absolute"/>
             <div
-              :style="{ width: `${(downvote / (upvote + downvote)) * 100}%` }"
+              :style="{ width: `${(feed.downvote / (feed.upvote + feed.downvote)) * 100}%` }"
               class="ratio-bar-downvote position-absolute"
             />
           </div>
           <div class="col">
-            <span :class="{ 'downvote-color': voteState === 0 }">{{ downvote }}</span>
+            <span :class="{ 'downvote-color': voteState === 0 }">{{ feed.downvote }}</span>
             <down-arrow
               :class="{ downvote: voteState === 0 }"
               class="icon arrow clickable ml-1"
@@ -39,12 +39,12 @@
         </div>
       </div>
       <div class="col-3">
-        <reply class="icon reply"/>
-        Reply
+        <comment class="icon comment"/>
+        {{ feed.comment }}
       </div>
       <div class="col-2">
         <share class="icon share"/>
-        Share
+        {{ feed.share }}
       </div>
     </div>
   </div>
@@ -53,40 +53,81 @@
 <script lang="ts">
 import { Vue, Component, Prop, Watch } from 'vue-property-decorator'
 import DownArrow from '@/assets/icons/down-arrow.svg'
-import Reply from '@/assets/icons/reply.svg'
+import Comment from '@/assets/icons/comment.svg'
 import Share from '@/assets/icons/share.svg'
-
-enum VoteState {
-  Down = 0,
-  Up = 1,
-  None = 2
-}
+import { Feed, VoteState } from '@/models/feed'
 
 @Component({
   components: {
     DownArrow,
-    Reply,
+    Comment,
     Share
   }
 })
-export default class Feed extends Vue {
-  @Prop({type: String, required: true}) readonly avatar!: string
-  @Prop(String) readonly groupName!: string
-  @Prop({type: String, required: true}) readonly originalPoster!: string
-  @Prop({type: String, required: true}) readonly content!: string
-  @Prop(String) readonly image!: string
-  @Prop({type: Number, required: true}) readonly initVoteState!: VoteState
-  @Prop({type: Number, required: true}) readonly upvote!: number
-  @Prop({type: Number, required: true}) readonly downvote!: number
-  @Prop({type: Number, required: true}) readonly share!: number
+export default class FeedComp extends Vue {
+  @Prop({type: Object, required: true}) readonly feed!: Feed
 
-  voteState: VoteState = this.initVoteState
+  voteState: VoteState = this.feed.voteState
+
+  get calcTime(): string {
+    const MINUTE = 1000 * 60
+    const HOUR = MINUTE * 60
+    const DAY = HOUR * 24
+    const MONTH = DAY * 30
+    const YEAR = MONTH * 12
+
+    const created = this.feed.createdAt.getTime()
+    const now = new Date().getTime()
+
+    const diff = now - created
+    let type: string = ''
+
+    /* tslint:disable:curly align */
+    if (diff >= MINUTE)
+      if (diff >= HOUR)
+        if (diff >= DAY)
+          if (diff >= MONTH)
+            if (diff >= YEAR)
+              type = 'year'
+            else type = 'month'
+          else type = 'day'
+        else type = 'hour'
+      else type = 'minute'
+    else type = 'second'
+
+    let diffType: number
+    switch (type) {
+      case 'second':
+        diffType = diff / 1000
+        break
+      case 'minute':
+        diffType = diff / MINUTE
+        break
+      case 'hour':
+        diffType = diff / HOUR
+        break
+      case 'day':
+        diffType = diff / DAY
+        break
+      case 'month':
+        diffType = diff / MONTH
+        break
+      case 'year':
+        diffType = diff / YEAR
+        break
+      default:
+        diffType = -1
+        break
+    }
+    return `${diffType.toFixed()} ${type}(s)`
+  }
 }
 </script>
 
 <style scoped lang="scss">
   .feed {
     background-color: white;
+
     .title {
       .time {
         color: #848484;
@@ -151,7 +192,7 @@ export default class Feed extends Vue {
         }
       }
 
-      &.reply {
+      &.comment {
         top: 0;
         width: 17px;
         height: 17px;

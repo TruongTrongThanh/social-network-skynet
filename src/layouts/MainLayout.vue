@@ -26,6 +26,10 @@ import Sidebar from '@/components/Sidebar.vue'
 export default class MainLayout extends Vue {
   @State sidebarDisplay!: boolean
   @Mutation sidebarToggle: any
+
+  mounted() {
+    document.body.style.backgroundColor = '#eaeaea'
+  }
 }
 </script>
 

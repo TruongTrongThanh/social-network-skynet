@@ -3,17 +3,16 @@
     <div class="home">
       <div class="row justify-content-center">
         <div class="feed-list col-md-6 mr-5">
-          <Feed
-            avatar="https://www.w3schools.com/howto/img_avatar.png"
-            original-poster="Thanh2111"
-            content="this is content feed..."
-            :initVoteState="1"
-            :upvote="51"
-            :downvote="20"
-            :share="10"
+          <feed-comp
+            v-for="x in 5"
+            :key="x"
+            :feed="sampleFeed"
+            class="mb-3"
           />
         </div>
-        <div class="other col-md-3">this is notif, action,...</div>
+        <div class="suggestion sticky-top col-md-3">
+          this is suggestion...
+        </div>
       </div>
     </div>
   </main-layout>
@@ -22,27 +21,41 @@
 <script lang="ts">
 import { Vue, Component } from 'vue-property-decorator'
 import MainLayout from '@/layouts/MainLayout.vue'
-import Feed from '@/components/Feed.vue'
+import FeedComp from '@/components/FeedComp.vue'
+import { Feed, VoteState } from '@/models/feed'
 
 @Component({
   components: {
     MainLayout,
-    Feed
+    FeedComp
   }
 })
 export default class Home extends Vue {
-  mounted() {
-    document.body.style.backgroundColor = '#eaeaea'
+  sampleFeed: Feed = {
+    id: 0,
+    originalPoster: {
+      id: 'thanhtt21',
+      fullname: 'Trương Trọng Thanh',
+      avatar: 'https://www.w3schools.com/howto/img_avatar.png'
+    },
+    content: 'this is content feed...',
+    voteState: VoteState.Up,
+    upvote: 50,
+    downvote: 21,
+    share: 20,
+    comment: 5,
+    createdAt: new Date(2019, 7, 22, 12, 20, 33)
   }
 }
 </script>
 
 <style scoped lang="scss">
-.home {
-  margin-top: 80px;
+  .home {
+    margin-top: $topOffset;
 
-  .other {
-    background-color: green;
+    .suggestion {
+      background-color: white;
+      top: $topOffset;
+    }
   }
-}
 </style>
