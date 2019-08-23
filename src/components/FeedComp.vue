@@ -15,11 +15,11 @@
         <div class="row justify-content-center align-items-center">
           <div class="col">
             <down-arrow
-              :class="{ upvote: voteState === 1 }"
+              :class="{ upvote: feed.voteState === 1 }"
               class="icon arrow rotate-180 clickable mr-1"
-              @click="voteState = voteState === 1 ? 2 : 1"
+              @click="feed.voteState = feed.voteState === 1 ? 2 : 1"
             />
-            <span :class="{ 'upvote-color': voteState === 1 }">{{ feed.upvote }}</span>
+            <span :class="{ 'upvote-color': feed.voteState === 1 }">{{ feed.upvote }}</span>
           </div>
           <div class="col-6 ratio-bar position-relative">
             <div class="ratio-bar-upvote position-absolute"/>
@@ -29,11 +29,11 @@
             />
           </div>
           <div class="col">
-            <span :class="{ 'downvote-color': voteState === 0 }">{{ feed.downvote }}</span>
+            <span :class="{ 'downvote-color': feed.voteState === 0 }">{{ feed.downvote }}</span>
             <down-arrow
-              :class="{ downvote: voteState === 0 }"
+              :class="{ downvote: feed.voteState === 0 }"
               class="icon arrow clickable ml-1"
-              @click="voteState = voteState === 0 ? 2 : 0"
+              @click="feed.voteState = feed.voteState === 0 ? 2 : 0"
             />
           </div>
         </div>
@@ -65,9 +65,9 @@ import { Feed, VoteState } from '@/models/feed'
   }
 })
 export default class FeedComp extends Vue {
-  @Prop({type: Object, required: true}) readonly feed!: Feed
+  @Prop({type: Object, required: true}) readonly init!: Feed
 
-  voteState: VoteState = this.feed.voteState
+  feed: Feed = Object.assign({}, this.init)
 
   get calcTime(): string {
     const MINUTE = 1000 * 60

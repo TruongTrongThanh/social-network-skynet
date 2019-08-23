@@ -1,17 +1,19 @@
 <template>
   <main-layout>
     <div class="home">
-      <div class="row justify-content-center">
+      <div class="row align-items-start justify-content-center">
         <div class="feed-list col-md-6 mr-5">
           <feed-comp
-            v-for="x in 5"
+            v-for="x in 50"
             :key="x"
-            :feed="sampleFeed"
+            :init="sampleFeed"
             class="mb-3"
           />
         </div>
-        <div class="suggestion sticky-top col-md-3">
-          this is suggestion...
+        <div class="trending sticky-top col-md-3">
+          <popular-lang class="mb-3"/>
+          <famous class="mb-2"/>
+          <div class="copyright text-muted">&copy; {{ new Date().getFullYear() }} Skynet, Open University. All rights reserved</div>
         </div>
       </div>
     </div>
@@ -22,12 +24,16 @@
 import { Vue, Component } from 'vue-property-decorator'
 import MainLayout from '@/layouts/MainLayout.vue'
 import FeedComp from '@/components/FeedComp.vue'
+import Famous from '@/components/Famous.vue'
+import PopularLang from '@/components/PopularLang.vue'
 import { Feed, VoteState } from '@/models/feed'
 
 @Component({
   components: {
     MainLayout,
-    FeedComp
+    FeedComp,
+    Famous,
+    PopularLang
   }
 })
 export default class Home extends Vue {
@@ -53,9 +59,12 @@ export default class Home extends Vue {
   .home {
     margin-top: $topOffset;
 
-    .suggestion {
-      background-color: white;
+    .trending {
       top: $topOffset;
+    }
+
+    .copyright {
+      font-size: 0.9rem;
     }
   }
 </style>
