@@ -1,6 +1,6 @@
 <template>
   <div class="main-layout container-fluid">
-    <slot/>
+    <router-view class="top-offset"/>
     <navbar/>
     <div
       v-if="sidebarDisplay"
@@ -34,6 +34,10 @@ export default class MainLayout extends Vue {
 </script>
 
 <style scoped lang="scss">
+  .top-offset {
+    margin-top: $topOffset;
+  }
+
   .blackout {
     background-color: black;
     opacity: .5;

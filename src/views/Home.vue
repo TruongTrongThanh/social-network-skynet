@@ -1,23 +1,21 @@
 <template>
-  <main-layout>
-    <div class="home">
-      <div class="row align-items-start justify-content-center">
-        <div class="feed-list col-md-6 mr-5">
-          <feed-comp
-            v-for="x in 50"
-            :key="x"
-            :init="sampleFeed"
-            class="mb-3"
-          />
-        </div>
-        <div class="trending sticky-top col-md-3">
-          <popular-lang class="mb-3"/>
-          <famous class="mb-2"/>
-          <div class="copyright text-muted">&copy; {{ new Date().getFullYear() }} Skynet, Open University. All rights reserved</div>
-        </div>
+  <div class="home">
+    <div class="row align-items-start justify-content-center">
+      <div class="feed-list col-md-6 mr-5">
+        <feed-comp
+          v-for="x in 50"
+          :key="x"
+          :init="sampleFeed"
+          class="mb-3"
+        />
+      </div>
+      <div class="trending sticky-top col-md-3">
+        <popular-lang class="mb-3"/>
+        <famous class="mb-2"/>
+        <div class="copyright text-muted">&copy; {{ new Date().getFullYear() }} Skynet, Open University. All rights reserved</div>
       </div>
     </div>
-  </main-layout>
+  </div>
 </template>
 
 <script lang="ts">
@@ -57,8 +55,6 @@ export default class Home extends Vue {
 
 <style scoped lang="scss">
   .home {
-    margin-top: $topOffset;
-
     .trending {
       top: $topOffset;
     }

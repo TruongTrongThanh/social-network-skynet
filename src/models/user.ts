@@ -5,7 +5,8 @@ export default interface User {
   fullname: string
   password?: string
   avatar?: string
-  friends?: User[] | string[]
+  follow?: User[] | string[]
+  followers?: User[] | string[]
   groups?: Group[] | string[]
   createdAt?: Date
   modifiedAt?: Date
