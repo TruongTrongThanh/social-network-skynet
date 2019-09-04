@@ -1,9 +1,9 @@
 <template>
-  <div class="feed rounded container-fluid">
+  <div class="feed rounded container-fluid p-0">
     <div class="title rounded-top row justify-content-between align-items-center py-2">
       <div class="col-4">
-        <img :src="feed.originalPoster.avatar" class="mr-2" width="30">
-        <span>{{ feed.originalPoster.fullname }}</span>
+        <img :src="feed.originalPoster.avatar" class="mr-2" width="40">
+        <span class="fullname">{{ feed.originalPoster.fullname }}</span>
       </div>
       <div class="time col-4 text-right">Posted {{ calcTime }} ago</div>
     </div>
@@ -132,6 +132,9 @@ export default class FeedComp extends Vue {
       .time {
         color: #848484;
         font-size: 0.8em;
+      }
+      .fullname {
+        font-weight: bold;
       }
     }
     .content {

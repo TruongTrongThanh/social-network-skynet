@@ -25,7 +25,7 @@ export interface FeedComment {
   reply?: FeedComment[] | number[]
 }
 
-export interface ReplyComment {
+export interface CommentReply {
   id: number
   originalPoster: User
   content: string

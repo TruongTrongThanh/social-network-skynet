@@ -28,8 +28,6 @@ export default class CommentInput extends Vue {}
 
       .comment-control {
         background-color: #f8f8f8;
-        position: relative;
-        bottom: 2px;
       }
 
       .comment-btn {
