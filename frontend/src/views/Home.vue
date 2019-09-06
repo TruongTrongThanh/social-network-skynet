@@ -6,7 +6,7 @@
           v-for="x in 50"
           :key="x"
           :init="sampleFeed"
-          class="mb-3"
+          class="px-3 mb-3"
         />
       </div>
       <div class="trending sticky-top col-md-3">

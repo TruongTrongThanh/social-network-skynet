@@ -1,17 +1,27 @@
 <template>
   <div class="comment-list px-3 pb-2">
-    <comment-comp
+    <div
       v-for="cm in commentList"
       :key="cm.id"
-      :comment="cm"
-      class="mb-2"
-    />
+      class="mb-4"
+    >
+      <comment-comp
+        :comment="cm"
+        class="mb-2"
+      />
+      <comment-comp
+        v-for="reply in cm.reply"
+        :key="reply.id"
+        :comment="reply"
+        class="ml-5"
+      />
+    </div>
   </div>
 </template>
 
 <script lang="ts">
 import { Vue, Component } from 'vue-property-decorator'
-import { FeedComment, CommentReply } from '@/models/feed'
+import { FeedComment } from '@/models/feed'
 import CommentComp from '@/components/CommentComp.vue'
 
 @Component({
@@ -29,7 +39,8 @@ export default class CommentList extends Vue {
     },
     content: 'this is comment... ahahaha...',
     upvote: 2,
-    downvote: 0
+    downvote: 0,
+    createdAt: new Date(2019, 7, 22, 12, 20, 33)
   }
 
   comment2: FeedComment = {
@@ -41,7 +52,9 @@ export default class CommentList extends Vue {
     },
     content: 'this is comment 2... ahahaha...',
     upvote: 1,
-    downvote: 1
+    downvote: 1,
+    createdAt: new Date(2019, 7, 22, 12, 20, 33),
+    reply: [this.comment1]
   }
 
   commentList: FeedComment[] = [this.comment1, this.comment2]

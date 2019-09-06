@@ -4,14 +4,19 @@
       class="navbar-toggler-icon clickable mr-3"
       @click="sidebarToggle"
     />
-    <img
-      :src="require('@/assets/logo.png')"
-      width="35"
-      height="35"
-      class="d-inline-block align-top ml-1"
-      alt="Skynet logo"
+    <router-link
+      to="/"
+      class="link-unstyled clickable"
     >
-    Skynet
+      <img
+        :src="require('@/assets/logo.png')"
+        width="35"
+        height="35"
+        class="d-inline-block align-top ml-1"
+        alt="Skynet logo"
+      >
+      Skynet
+    </router-link>
   </div>
 </template>
 

@@ -22,16 +22,8 @@ export interface FeedComment {
   content: string
   upvote: number
   downvote: number
+  createdAt: Date
   reply?: FeedComment[] | number[]
-}
-
-export interface CommentReply {
-  id: number
-  originalPoster: User
-  content: string
-  upvote: number
-  downvote: number
-  comment: FeedComment | number
 }
 
 export enum VoteState {
