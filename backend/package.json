@@ -1,16 +1,18 @@
 {
-  "name": "koa-typescript-starter",
+  "name": "skynet-api",
   "version": "1.0.0",
   "main": "dist/index.js",
   "license": "CC0-1.0",
   "scripts": {
     "build-server": "tslint --fix --project . && tsc",
-    "watch-server": "cross-env NODE_ENV=development nodemon --watch src/**/* -e ts,tsx --exec ts-node src/server/server.ts"
+    "watch-server": "nodemon --watch src/**/* -e ts,tsx --exec ts-node --require dotenv/config src/server.ts"
   },
   "devDependencies": {
     "@types/koa": "2.0.49",
     "@types/koa-router": "7.0.42",
+    "@types/pg": "7.11.1",
     "cross-env": "5.2.1",
+    "dotenv": "8.1.0",
     "nodemon": "1.19.2",
     "ts-node": "8.3.0",
     "tslint": "5.19.0",
@@ -18,6 +20,7 @@
   },
   "dependencies": {
     "koa": "2.8.1",
-    "koa-router": "7.4.0"
+    "koa-router": "7.4.0",
+    "pg": "7.12.1"
   }
 }

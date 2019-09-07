@@ -1,10 +1,13 @@
 import * as Koa from 'koa'
 
 import { config } from './config'
-import { logger } from './logging'
-import { routes } from './routes'
+import { init } from './database'
+import logger from './logging'
+import routes from './routes'
 
 const app = new Koa()
+
+init()
 
 app.use(logger)
 app.use(routes)

@@ -29,7 +29,7 @@ function outputLog(data: Partial<ILogData>, thrownError: any) {
     }
 }
 
-export async function logger(ctx: Koa.Context, next: () => Promise<any>) {
+export default async function logger(ctx: Koa.Context, next: () => Promise<any>) {
 
     const start = new Date().getMilliseconds()
 
