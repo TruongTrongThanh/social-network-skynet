@@ -1,9 +1,12 @@
 
 import * as Router from 'koa-router'
-import userRoutes from './user'
+import authenticationRoutes from './authentication'
 
 const router = new Router()
 
-router.use(userRoutes)
+router.options('*', async ctx => {
+  ctx.status = 200
+})
+router.use(authenticationRoutes)
 
 export default router.routes()

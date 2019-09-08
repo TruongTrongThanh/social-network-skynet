@@ -16,9 +16,9 @@
         Đăng ký
       </span>
     </div>
-    <login-form v-if="mode === 0"/>
-    <register-form v-if="mode === 1"/>
-    <forget-form v-if="mode === 2"/>
+    <login-form v-show="mode === 0"/>
+    <register-form v-show="mode === 1"/>
+    <forget-form v-show="mode === 2"/>
     <div
       class="forgot-pass clickable"
       @click="mode = 2"
