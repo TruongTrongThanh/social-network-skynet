@@ -2,6 +2,7 @@
   <div class="home">
     <div class="row align-items-start justify-content-center">
       <div class="feed-list col-md-6 mr-5">
+        <feed-input class="mb-3"/>
         <feed-comp
           v-for="x in 50"
           :key="x"
@@ -24,6 +25,7 @@ import MainLayout from '@/layouts/MainLayout.vue'
 import FeedComp from '@/components/FeedComp.vue'
 import Famous from '@/components/Famous.vue'
 import PopularLang from '@/components/PopularLang.vue'
+import FeedInput from '@/components/FeedInput.vue'
 import { Feed, VoteState } from '@/models/feed'
 
 @Component({
@@ -31,7 +33,8 @@ import { Feed, VoteState } from '@/models/feed'
     MainLayout,
     FeedComp,
     Famous,
-    PopularLang
+    PopularLang,
+    FeedInput
   }
 })
 export default class Home extends Vue {

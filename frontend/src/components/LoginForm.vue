@@ -8,7 +8,7 @@
 
 <script lang="ts">
 import { Vue, Component } from 'vue-property-decorator'
-import * as API from '@/apis/authentication'
+import * as Auth from '@/apis/authentication'
 
 @Component
 export default class LoginForm extends Vue {
@@ -17,7 +17,7 @@ export default class LoginForm extends Vue {
 
   async login() {
     try {
-      await API.login(this.email, this.password)
+      await Auth.login(this.email, this.password)
       this.$router.push('/')
     } catch (err) {
       console.log(err)

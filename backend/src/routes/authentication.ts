@@ -31,8 +31,7 @@ router.post('/login', async ctx => {
 router.post('/get-user', async ctx => {
   try {
     const jwtoken = ctx.cookies.get('access_token')
-    console.log(jwtoken)
-    const identity: User = await Auth.getUser(jwtoken)
+    const identity = await Auth.getUserFromJWT(jwtoken)
     ctx.body = identity
   } catch (err) {
     ctx.status = 403

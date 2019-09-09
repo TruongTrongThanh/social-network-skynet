@@ -17,31 +17,22 @@ export default class CommentInput extends Vue {}
 
 <style scoped lang="scss">
   .comment-input {
+    .comment-control {
+      background-color: #f8f8f8;
+    }
 
-      textarea {
-        border: 0;
-        outline: none;
+    .comment-btn {
+      font-size: .8rem;
+      &:active:focus {
         -webkit-box-shadow: none;
         -moz-box-shadow: none;
         box-shadow: none;
       }
-
-      .comment-control {
-        background-color: #f8f8f8;
+      &:focus {
+        -webkit-box-shadow: none;
+        -moz-box-shadow: none;
+        box-shadow: none;
       }
-
-      .comment-btn {
-        font-size: .8rem;
-        &:active:focus {
-          -webkit-box-shadow: none;
-          -moz-box-shadow: none;
-          box-shadow: none;
-        }
-        &:focus {
-          -webkit-box-shadow: none;
-          -moz-box-shadow: none;
-          box-shadow: none;
-        }
-      }
+    }
   }
 </style>

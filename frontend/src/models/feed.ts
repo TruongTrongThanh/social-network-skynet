@@ -7,7 +7,7 @@ export interface Feed {
   group?: Group
   content: string
   image?: string
-  voteState: VoteState
+  voteState?: VoteState
   upvote: number
   downvote: number
   comment: number
@@ -28,6 +28,5 @@ export interface FeedComment {
 
 export enum VoteState {
   Down = 0,
-  Up = 1,
-  None = 2
+  Up = 1
 }

@@ -9,6 +9,14 @@
     cursor: pointer;
   }
 
+  textarea {
+    border: 0;
+    outline: none;
+    -webkit-box-shadow: none;
+    -moz-box-shadow: none;
+    box-shadow: none;
+  }
+
   .link-unstyled {
     &,
     &:visited,

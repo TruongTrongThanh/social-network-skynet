@@ -38,14 +38,28 @@ export async function login(username: string, password: string): Promise<string>
   return null
 }
 
-export async function getUser(jwtoken: string): Promise<User> {
+export async function getUserFromJWT(jwtoken: string): Promise<User> {
   const decoded: any = jwt.verify(jwtoken, JWT_KEY)
+  return await getUserFromID(decoded.id)
+}
+
+export async function getUserFromID(userID: string): Promise<User> {
   const query = `
     SELECT id, fullname, avatar
     FROM public."User"
     WHERE id = $1
   `
-  const params = [decoded.id]
+  const params = [userID]
   const res = await PB.query(query, params)
   return res.rows[0] as User
+}
+
+export function getUserIDFromJWT(jwtoken: string): Promise<string> {
+  return new Promise((resolve, reject) => {
+    jwt.verify(jwtoken, JWT_KEY, (err, decoded) => {
+      if (err) reject(err)
+      resolve((decoded as any).id)
+    })
+  })
+
 }
