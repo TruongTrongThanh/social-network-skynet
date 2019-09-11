@@ -7,13 +7,12 @@ export interface Feed {
   group?: Group
   content: string
   image?: string
-  voteState?: VoteState
+  voteState: boolean | null
   upvote: number
   downvote: number
   comment: number
   share: number
   createdAt: Date
-  commentList?: FeedComment[] | number[]
 }
 
 export interface FeedComment {
@@ -23,10 +22,4 @@ export interface FeedComment {
   upvote: number
   downvote: number
   createdAt: Date
-  reply?: FeedComment[] | number[]
-}
-
-export enum VoteState {
-  Down = 0,
-  Up = 1
 }

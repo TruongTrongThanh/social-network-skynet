@@ -1,12 +1,11 @@
 import User from './user'
 import Group from './group'
-import PB from '../database'
 
 export interface Feed {
   id: number
   originalPoster: User
   content: string
-  voteState?: VoteState
+  voteState: boolean | null
   upvote: number
   downvote: number
   comment: number
@@ -14,7 +13,7 @@ export interface Feed {
   createdAt: Date
   group?: Group
   image?: string
-  commentList?: FeedComment[] | number[]
+  commentList?: FeedComment[]
 }
 
 export interface FeedComment {
@@ -24,10 +23,5 @@ export interface FeedComment {
   upvote: number
   downvote: number
   createdAt: Date
-  reply?: FeedComment[] | number[]
-}
-
-export enum VoteState {
-  Down = 0,
-  Up = 1
+  reply?: FeedComment[]
 }
