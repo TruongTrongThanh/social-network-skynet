@@ -53,8 +53,7 @@ export default class CommentList extends Vue {
     content: 'this is comment 2... ahahaha...',
     upvote: 1,
     downvote: 1,
-    createdAt: new Date(2019, 7, 22, 12, 20, 33),
-    reply: [this.comment1]
+    createdAt: new Date(2019, 7, 22, 12, 20, 33)
   }
 
   commentList: FeedComment[] = [this.comment1, this.comment2]

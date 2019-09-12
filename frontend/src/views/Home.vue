@@ -4,9 +4,9 @@
       <div class="feed-list col-md-6 mr-5">
         <feed-input class="mb-3"/>
         <feed-comp
-          v-for="x in 50"
-          :key="x"
-          :init="sampleFeed"
+          v-for="feed in feeds"
+          :key="feed.id"
+          :init="feed"
           class="px-3 mb-3"
         />
       </div>
@@ -26,7 +26,8 @@ import FeedComp from '@/components/FeedComp.vue'
 import Famous from '@/components/Famous.vue'
 import PopularLang from '@/components/PopularLang.vue'
 import FeedInput from '@/components/FeedInput.vue'
-import { Feed, VoteState } from '@/models/feed'
+import { Feed } from '@/models/feed'
+import { getHomeFeeds } from '@/apis/feed'
 
 @Component({
   components: {
@@ -38,8 +39,14 @@ import { Feed, VoteState } from '@/models/feed'
   }
 })
 export default class Home extends Vue {
-  created() {
-    //
+  feeds: Feed[] = []
+
+  async created() {
+    try {
+      this.feeds = await getHomeFeeds()
+    } catch (err) {
+      console.log(err)
+    }
   }
 }
 </script>

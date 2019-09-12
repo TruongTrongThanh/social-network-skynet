@@ -2,7 +2,7 @@
   <div class="feed rounded container-fluid p-0">
     <div class="title rounded-top row justify-content-between align-items-center py-2">
       <div class="col-4">
-        <img :src="feed.originalPoster.avatar" class="mr-2" width="40">
+        <img :src="feed.originalPoster.avatar || 'https://www.w3schools.com/howto/img_avatar.png'" class="mr-2" width="40">
         <span class="fullname">{{ feed.originalPoster.fullname }}</span>
       </div>
       <div class="time col-4 text-right">Posted {{ calcTime }} ago</div>
@@ -15,11 +15,11 @@
         <div class="row justify-content-center align-items-center">
           <div class="col">
             <down-arrow
-              :class="{ upvote: feed.voteState === 1 }"
+              :class="{ upvote: feed.voteState === true }"
               class="icon arrow rotate-180 clickable mr-1"
-              @click="feed.voteState = feed.voteState === 1 ? 2 : 1"
+              @click="vote(true)"
             />
-            <span :class="{ 'upvote-color': feed.voteState === 1 }">{{ feed.upvote }}</span>
+            <span :class="{ 'upvote-color': feed.voteState === true }">{{ feed.upvote }}</span>
           </div>
           <div class="col-6 ratio-bar position-relative">
             <div class="ratio-bar-upvote position-absolute"/>
@@ -29,11 +29,11 @@
             />
           </div>
           <div class="col">
-            <span :class="{ 'downvote-color': feed.voteState === 0 }">{{ feed.downvote }}</span>
+            <span :class="{ 'downvote-color': feed.voteState === false }">{{ feed.downvote }}</span>
             <down-arrow
-              :class="{ downvote: feed.voteState === 0 }"
+              :class="{ downvote: feed.voteState === false }"
               class="icon arrow clickable ml-1"
-              @click="feed.voteState = feed.voteState === 0 ? 2 : 0"
+              @click="vote(false)"
             />
           </div>
         </div>
@@ -56,7 +56,7 @@ import CalcTimeMixin from '@/mixins/calc-time'
 import DownArrow from '@/assets/icons/down-arrow.svg'
 import Comment from '@/assets/icons/comment.svg'
 import Share from '@/assets/icons/share.svg'
-import { Feed, VoteState } from '@/models/feed'
+import { Feed } from '@/models/feed'
 
 @Component({
   components: {
@@ -71,7 +71,11 @@ export default class FeedComp extends Mixins(CalcTimeMixin) {
   feed: Feed = Object.assign({}, this.init)
 
   get calcTime(): string {
-    return this.getCalcTime(this.feed.createdAt)
+    return this.getCalcTime(new Date(this.feed.createdAt))
+  }
+
+  vote(val: boolean) {
+    this.feed.voteState = this.feed.voteState === val ? null : val
   }
 }
 </script>

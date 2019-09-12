@@ -4,15 +4,16 @@ import Group from './group'
 export interface Feed {
   id: number
   originalPoster: User
-  group?: Group
   content: string
-  image?: string
   voteState: boolean | null
   upvote: number
   downvote: number
   comment: number
   share: number
-  createdAt: Date
+  createdAt: string
+  group?: Group
+  image?: string
+  commentList?: FeedComment[]
 }
 
 export interface FeedComment {

@@ -4,6 +4,7 @@ import { config } from './config'
 import { init } from './database'
 import * as bodyParser from 'koa-bodyparser'
 import logger from './logging'
+import auth from './middlewares/authentication'
 import routes from './routes'
 
 const app = new Koa()
@@ -17,6 +18,7 @@ app.use(async (ctx, next) => {
   await next()
 })
 
+app.use(auth)
 app.use(logger)
 app.use(bodyParser())
 app.use(routes)

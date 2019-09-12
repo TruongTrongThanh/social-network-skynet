@@ -25,3 +25,19 @@ export interface FeedComment {
   createdAt: Date
   reply?: FeedComment[]
 }
+
+export interface FeedForm {
+  content: string
+  groupID?: string
+}
+
+export interface FeedVote {
+  feedID: number
+  voteState?: boolean
+}
+
+export interface FeedVoteNumber {
+  feedID: string
+  upvote: number
+  downvote: number
+}

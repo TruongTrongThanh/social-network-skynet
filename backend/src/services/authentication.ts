@@ -61,5 +61,4 @@ export function getUserIDFromJWT(jwtoken: string): Promise<string> {
       resolve((decoded as any).id)
     })
   })
-
 }
