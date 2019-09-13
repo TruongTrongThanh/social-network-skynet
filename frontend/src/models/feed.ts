@@ -24,3 +24,8 @@ export interface FeedComment {
   downvote: number
   createdAt: Date
 }
+
+export interface FeedVoteNumber {
+  upvote: number
+  downvote: number
+}

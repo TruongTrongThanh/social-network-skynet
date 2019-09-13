@@ -5,11 +5,8 @@ import feedRoutes from './feed'
 
 const router = new Router()
 
-router.options('*', async ctx => {
-  ctx.status = 200
-})
-
 router.use(authenticationRoutes)
 router.use(feedRoutes)
+router.use(router.allowedMethods())
 
 export default router.routes()

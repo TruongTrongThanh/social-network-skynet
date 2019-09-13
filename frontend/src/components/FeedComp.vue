@@ -57,6 +57,7 @@ import DownArrow from '@/assets/icons/down-arrow.svg'
 import Comment from '@/assets/icons/comment.svg'
 import Share from '@/assets/icons/share.svg'
 import { Feed } from '@/models/feed'
+import { voteFeed } from '@/apis/feed'
 
 @Component({
   components: {
@@ -74,8 +75,11 @@ export default class FeedComp extends Mixins(CalcTimeMixin) {
     return this.getCalcTime(new Date(this.feed.createdAt))
   }
 
-  vote(val: boolean) {
+  async vote(val: boolean) {
     this.feed.voteState = this.feed.voteState === val ? null : val
+    const res = await voteFeed(this.feed.id, this.feed.voteState)
+    this.feed.upvote = res.upvote
+    this.feed.downvote = res.downvote
   }
 }
 </script>

@@ -27,21 +27,7 @@ import CommentList from '@/components/CommentList.vue'
   }
 })
 export default class FeedDetail extends Vue {
-  sampleFeed: Feed = {
-    id: 0,
-    originalPoster: {
-      id: 'thanhtt21',
-      fullname: 'Trương Trọng Thanh',
-      avatar: 'https://www.w3schools.com/howto/img_avatar.png'
-    },
-    content: 'this is content feed...',
-    voteState: true,
-    upvote: 50,
-    downvote: 21,
-    share: 20,
-    comment: 5,
-    createdAt: new Date(2019, 7, 22, 12, 20, 33).toString()
-  }
+  //
 }
 </script>
 

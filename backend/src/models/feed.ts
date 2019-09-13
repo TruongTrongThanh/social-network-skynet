@@ -37,7 +37,6 @@ export interface FeedVote {
 }
 
 export interface FeedVoteNumber {
-  feedID: string
   upvote: number
   downvote: number
 }
