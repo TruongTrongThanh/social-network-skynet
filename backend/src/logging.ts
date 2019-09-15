@@ -45,6 +45,7 @@ export default async function logger(ctx: Koa.Context, next: () => Promise<any>)
     let errorThrown: any = null
     try {
         await next()
+        console.log(ctx.body)
         logData.statusCode = ctx.status
     } catch (e) {
         errorThrown = e

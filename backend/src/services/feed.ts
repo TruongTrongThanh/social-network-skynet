@@ -1,5 +1,5 @@
 import PB from '../database'
-import { Feed, FeedVote, FeedForm, FeedVoteNumber } from '../models/feed'
+import { Feed, FeedVote, FeedForm, FeedVoteNumber, FeedCommentForm } from '../models/feed'
 
 export async function getHomeFeeds(userID: string): Promise<Feed[]> {
   const query = `SELECT * FROM get_feeds_from_user($1);`
@@ -9,7 +9,7 @@ export async function getHomeFeeds(userID: string): Promise<Feed[]> {
 }
 
 export async function getFeed(userID: string, feedID: number): Promise<Feed> {
-  const query = `SELECT * FROM get_feeds_from_user($1) WHERE id = $2;`
+  const query = `SELECT * FROM get_feed_details($1, $2);`
   const params = [userID, feedID]
   const res = await PB.query(query, params)
   return res.rows[0] as Feed
@@ -65,4 +65,14 @@ export async function getVote(feedID: number) {
 
 export async function getComments(userID: string, feedID: number, offset?: number, limit?: number) {
   // const query = ``
+}
+
+export async function postComment(userID: string, form: FeedCommentForm) {
+  const query = `
+    INSERT INTO public."Comment"(
+      feed_id, content, user_id, created_at)
+      VALUES ($1, $2, $3, $4);
+  `
+  const params = [form.feedID, form.content, userID, new Date()]
+  await PB.query(query, params)
 }

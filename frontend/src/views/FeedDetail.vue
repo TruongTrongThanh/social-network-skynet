@@ -1,11 +1,16 @@
 <template>
-  <div class="feed-detail container">
+  <div
+    v-if="feed"
+    class="feed-detail container"
+  >
     <div class="row">
       <div class="col-8 feed-wrapper rounded">
-        <feed-comp :init="sampleFeed"/>
-        <comment-input class="mt-3"/>
+        <feed-comp :init="feed"/>
+        <comment-input
+          class="mt-3"
+        />
         <hr class="mt-4">
-        <comment-list/>
+        <comment-list :init="feed.commentList"/>
       </div>
       <div class="col ml-3">This is post liên quan</div>
     </div>
@@ -15,6 +20,7 @@
 <script lang="ts">
 import { Vue, Component } from 'vue-property-decorator'
 import { Feed } from '@/models/feed'
+import { getFeedDetail } from '@/apis/feed'
 import FeedComp from '@/components/FeedComp.vue'
 import CommentInput from '@/components/CommentInput.vue'
 import CommentList from '@/components/CommentList.vue'
@@ -27,7 +33,10 @@ import CommentList from '@/components/CommentList.vue'
   }
 })
 export default class FeedDetail extends Vue {
-  //
+  feed: Feed | null = null
+  async created() {
+    this.feed = await getFeedDetail(this.$route.params.id as any)
+  }
 }
 </script>
 

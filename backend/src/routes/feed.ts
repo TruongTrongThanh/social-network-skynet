@@ -1,7 +1,7 @@
 
 import * as Router from 'koa-router'
-import { getHomeFeeds, getFeed, postFeed, vote, getVote } from '../services/feed'
-import { FeedForm, FeedVote } from '../models/feed'
+import { getHomeFeeds, getFeed, postFeed, vote, getVote, postComment } from '../services/feed'
+import { FeedForm, FeedVote, FeedCommentForm } from '../models/feed'
 
 const router = new Router()
 
@@ -20,7 +20,7 @@ router.get('/home-feeds', async ctx => {
 router.get('/feed', async ctx => {
   ctx.assert(ctx.state.userID, 401)
   try {
-    ctx.body = await getFeed(ctx.state.userID, ctx.request.body.feedID)
+    ctx.body = await getFeed(ctx.state.userID, ctx.query.id)
     ctx.status = 200
   } catch (err) {
     console.log(err)
@@ -29,8 +29,8 @@ router.get('/feed', async ctx => {
 })
 
 router.post('/feed', async ctx => {
+  ctx.assert(ctx.state.userID, 401)
   try {
-    ctx.assert(ctx.state.userID, 401)
     await postFeed(ctx.request.body as FeedForm, ctx.state.userID)
     ctx.status = 200
   } catch (err) {
@@ -52,14 +52,20 @@ router.post('/feed/vote', async ctx => {
   }
 })
 
-router.get('/feed/comments', async ctx => {
+router.post('/feed/comment', async ctx => {
   ctx.assert(ctx.state.userID, 401)
-  try {
-    //
-  } catch (err) {
-    console.timeLog(err)
-    ctx.status = 500
-  }
+  await postComment(ctx.state.userID, ctx.request.body as FeedCommentForm)
+  ctx.status = 200
 })
+
+// router.get('/feed/comments', async ctx => {
+//   ctx.assert(ctx.state.userID, 401)
+//   try {
+//     //
+//   } catch (err) {
+//     console.timeLog(err)
+//     ctx.status = 500
+//   }
+// })
 
 export default router.routes()

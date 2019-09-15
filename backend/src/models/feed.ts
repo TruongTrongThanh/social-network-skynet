@@ -23,12 +23,17 @@ export interface FeedComment {
   upvote: number
   downvote: number
   createdAt: Date
-  reply?: FeedComment[]
+  replies?: FeedComment[]
 }
 
 export interface FeedForm {
   content: string
   groupID?: string
+}
+
+export interface FeedCommentForm {
+  content: string
+  feedID: number
 }
 
 export interface FeedVote {

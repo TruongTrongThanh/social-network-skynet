@@ -29,7 +29,7 @@ export default class CommentComp extends Mixins(CalcTimeMixin) {
   @Prop({type: Object, required: true}) comment!: FeedComment
 
   get calcTime(): string {
-    return this.getCalcTime(this.comment.createdAt)
+    return this.getCalcTime(new Date(this.comment.createdAt))
   }
 }
 </script>

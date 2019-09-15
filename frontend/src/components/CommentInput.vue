@@ -1,8 +1,13 @@
 <template>
   <div class="comment-input border rounded">
-    <textarea class="w-100 rounded-top p-2" placeholder="What are your thoughts?"/>
+    <textarea v-model="content" class="w-100 rounded-top p-2" placeholder="What are your thoughts?"/>
     <div class="comment-control rounded-bottom clearfix">
-      <button class="btn btn-primary btn-sm comment-btn px-3 mx-2 my-1 float-right">Comment</button>
+      <button
+        class="btn btn-primary btn-sm comment-btn px-3 mx-2 my-1 float-right"
+        @click="post"
+      >
+        Comment
+      </button>
     </div>
     
   </div>
@@ -10,9 +15,20 @@
 
 <script lang="ts">
 import { Vue, Component } from 'vue-property-decorator'
+import { postComment } from '@/apis/feed'
 
 @Component
-export default class CommentInput extends Vue {}
+export default class CommentInput extends Vue {
+  content: string = ''
+
+  async post() {
+    try {
+      await postComment(this.$route.params.id as any, this.content)
+    } catch (err) {
+      console.log(err)
+    }
+  }
+}
 </script>
 
 <style scoped lang="scss">

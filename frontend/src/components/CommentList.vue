@@ -1,5 +1,8 @@
 <template>
-  <div class="comment-list px-3 pb-2">
+  <div
+    v-if="this.commentList && this.commentList.length > 0"
+    class="comment-list px-3 pb-2"
+  >
     <div
       v-for="cm in commentList"
       :key="cm.id"
@@ -17,10 +20,11 @@
       />
     </div>
   </div>
+  <div v-else class="no-comment my-4">There is no comment(s) :(</div>
 </template>
 
 <script lang="ts">
-import { Vue, Component } from 'vue-property-decorator'
+import { Vue, Component, Prop } from 'vue-property-decorator'
 import { FeedComment } from '@/models/feed'
 import CommentComp from '@/components/CommentComp.vue'
 
@@ -30,35 +34,14 @@ import CommentComp from '@/components/CommentComp.vue'
   }
 })
 export default class CommentList extends Vue {
-  comment1: FeedComment = {
-    id: 123,
-    originalPoster: {
-      id: 'thanhtt21',
-      fullname: 'Trương Trọng Thanh',
-      avatar: 'https://www.w3schools.com/howto/img_avatar.png'
-    },
-    content: 'this is comment... ahahaha...',
-    upvote: 2,
-    downvote: 0,
-    createdAt: new Date(2019, 7, 22, 12, 20, 33)
-  }
-
-  comment2: FeedComment = {
-    id: 24,
-    originalPoster: {
-      id: 'thanhtt11',
-      fullname: 'Trương Trọng Thanh 2',
-      avatar: 'https://www.w3schools.com/howto/img_avatar.png'
-    },
-    content: 'this is comment 2... ahahaha...',
-    upvote: 1,
-    downvote: 1,
-    createdAt: new Date(2019, 7, 22, 12, 20, 33)
-  }
-
-  commentList: FeedComment[] = [this.comment1, this.comment2]
+  @Prop({type: Array}) init!: FeedComment[]
+  commentList: FeedComment[] = this.init
 }
 </script>
 
 <style scoped lang="scss">
+  .no-comment {
+    color: gray;
+    text-align: center;
+  }
 </style>

@@ -5,7 +5,12 @@
         <img :src="feed.originalPoster.avatar || 'https://www.w3schools.com/howto/img_avatar.png'" class="mr-2" width="40">
         <span class="fullname">{{ feed.originalPoster.fullname }}</span>
       </div>
-      <div class="time col-4 text-right">Posted {{ calcTime }} ago</div>
+      <router-link
+        :to="{ name: 'feed', params: { id: feed.id } }"
+        class="time col-4 text-right"
+      >
+        Posted {{ calcTime }} ago
+      </router-link>
     </div>
     <div class="content row">
       {{ feed.content }}

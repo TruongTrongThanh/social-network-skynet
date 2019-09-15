@@ -22,7 +22,8 @@ export interface FeedComment {
   content: string
   upvote: number
   downvote: number
-  createdAt: Date
+  createdAt: string
+  replies?: FeedComment[]
 }
 
 export interface FeedVoteNumber {
