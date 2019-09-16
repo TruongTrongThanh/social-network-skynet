@@ -61,8 +61,9 @@ import CalcTimeMixin from '@/mixins/calc-time'
 import DownArrow from '@/assets/icons/down-arrow.svg'
 import Comment from '@/assets/icons/comment.svg'
 import Share from '@/assets/icons/share.svg'
-import { Feed } from '@/models/feed'
+import { Feed, FeedVoteNumber } from '@/models/feed'
 import { voteFeed } from '@/apis/feed'
+import socketIO from '@/apis/socket'
 
 @Component({
   components: {
@@ -74,7 +75,14 @@ import { voteFeed } from '@/apis/feed'
 export default class FeedComp extends Mixins(CalcTimeMixin) {
   @Prop({type: Object, required: true}) readonly init!: Feed
 
-  feed: Feed = Object.assign({}, this.init)
+  feed: Feed = this.init
+
+  created() {
+    socketIO.on(`feed-vote-update-${this.feed.id}`, (data: FeedVoteNumber) => {
+      this.feed.upvote = data.upvote
+      this.feed.downvote = data.downvote
+    })
+  }
 
   get calcTime(): string {
     return this.getCalcTime(new Date(this.feed.createdAt))
@@ -82,9 +90,11 @@ export default class FeedComp extends Mixins(CalcTimeMixin) {
 
   async vote(val: boolean) {
     this.feed.voteState = this.feed.voteState === val ? null : val
-    const res = await voteFeed(this.feed.id, this.feed.voteState)
-    this.feed.upvote = res.upvote
-    this.feed.downvote = res.downvote
+    await voteFeed(this.feed.id, this.feed.voteState)
+  }
+
+  beforeDestroy() {
+    socketIO.off(`feed-vote-update-${this.feed.id}`)
   }
 }
 </script>

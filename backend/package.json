@@ -15,6 +15,7 @@
     "@types/koa-router": "7.0.42",
     "@types/koa__cors": "2.2.3",
     "@types/pg": "7.11.1",
+    "@types/socket.io": "2.1.2",
     "cross-env": "5.2.1",
     "dotenv": "8.1.0",
     "nodemon": "1.19.2",
@@ -29,6 +30,7 @@
     "koa": "2.8.1",
     "koa-bodyparser": "4.2.1",
     "koa-router": "7.4.0",
-    "pg": "7.12.1"
+    "pg": "7.12.1",
+    "socket.io": "2.2.0"
   }
 }

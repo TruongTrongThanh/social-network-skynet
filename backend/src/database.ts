@@ -4,7 +4,7 @@ const PB = new Pool()
 
 export default PB
 
-export function init() {
+export function databaseInit() {
   const query = `CREATE TABLE IF NOT EXISTS public."User"
   (
       id character varying(50) COLLATE pg_catalog."default" NOT NULL,

@@ -1,9 +1,10 @@
-
 import * as Router from 'koa-router'
 import { getHomeFeeds, getFeed, postFeed, vote, getVote, postComment } from '../services/feed'
 import { FeedForm, FeedVote, FeedCommentForm } from '../models/feed'
+import { getSocketIO } from '../socket'
 
 const router = new Router()
+const io = getSocketIO()
 
 router.get('/home-feeds', async ctx => {
   ctx.assert(ctx.state.userID, 401)
@@ -41,15 +42,11 @@ router.post('/feed', async ctx => {
 
 router.post('/feed/vote', async ctx => {
   ctx.assert(ctx.state.userID, 401)
-  try {
-    const feedVote = ctx.request.body as FeedVote
-    await vote(ctx.state.userID, feedVote)
-    ctx.body = await getVote(feedVote.feedID)
-    ctx.status = 200
-  } catch (err) {
-    console.log(err)
-    ctx.status = 500
-  }
+  const feedVote = ctx.request.body as FeedVote
+  await vote(ctx.state.userID, feedVote)
+  const feedNumber = await getVote(feedVote.feedID)
+  io.emit(`feed-vote-update-${feedVote.feedID}`, feedNumber)
+  ctx.status = 200
 })
 
 router.post('/feed/comment', async ctx => {

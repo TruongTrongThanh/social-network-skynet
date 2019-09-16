@@ -10,7 +10,7 @@
           class="mt-3"
         />
         <hr class="mt-4">
-        <comment-list :init="feed.commentList"/>
+        <comment-list :feed-id="feed.id" :init="feed.commentList"/>
       </div>
       <div class="col ml-3">This is post liên quan</div>
     </div>
