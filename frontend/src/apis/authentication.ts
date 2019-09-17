@@ -20,5 +20,5 @@ export async function getUser(): Promise<User> {
   const res = await axios.post(url, null, {
     withCredentials: true
   })
-  return (res.data) as User
+  return res.data
 }

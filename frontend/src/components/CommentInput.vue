@@ -16,17 +16,27 @@
 <script lang="ts">
 import { Vue, Component } from 'vue-property-decorator'
 import { postComment } from '@/apis/feed'
+import { FeedComment } from '@/models/feed'
+import { State, Mutation } from 'vuex-class'
+import User from '@/models/user'
 
 @Component
 export default class CommentInput extends Vue {
+  @State authUser!: User
+
   content: string = ''
 
   async post() {
-    try {
-      await postComment(this.$route.params.id as any, this.content)
-    } catch (err) {
-      console.log(err)
+    const id = await postComment(this.$route.params.id as any, this.content)
+    const cmt: FeedComment = {
+      id,
+      originalPoster: this.authUser,
+      content: this.content,
+      upvote: 0,
+      downvote: 0,
+      createdAt: new Date().toString()
     }
+    this.$emit('posted', cmt)
   }
 }
 </script>

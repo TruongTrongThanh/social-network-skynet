@@ -39,12 +39,6 @@ export default class CommentList extends Vue {
   @Prop({type: Array}) init!: FeedComment[]
 
   commentList: FeedComment[] = this.init
-
-  created() {
-    socketIO.on(`comment-update-${this.feedId}`, (data: FeedComment[]) => {
-      this.commentList = this.commentList.concat(data)
-    })
-  }
 }
 </script>
 

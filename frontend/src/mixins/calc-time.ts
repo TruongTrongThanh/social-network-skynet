@@ -52,6 +52,9 @@ export default class CalcTimeMixin extends Vue {
         diffType = -1
         break
     }
-    return `${diffType.toFixed()} ${type}(s)`
+    if (diffType < 5 && type === 'second') {
+      return 'Now'
+    }
+    return `${diffType.toFixed()} ${type}${diffType > 1 ? 's' : ''}`
   }
 }

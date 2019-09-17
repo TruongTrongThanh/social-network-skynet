@@ -8,6 +8,7 @@
         <feed-comp :init="feed"/>
         <comment-input
           class="mt-3"
+          @posted="updateCommentList"
         />
         <hr class="mt-4">
         <comment-list :feed-id="feed.id" :init="feed.commentList"/>
@@ -19,7 +20,7 @@
 
 <script lang="ts">
 import { Vue, Component } from 'vue-property-decorator'
-import { Feed } from '@/models/feed'
+import { Feed, FeedComment } from '@/models/feed'
 import { getFeedDetail } from '@/apis/feed'
 import FeedComp from '@/components/FeedComp.vue'
 import CommentInput from '@/components/CommentInput.vue'
@@ -36,6 +37,13 @@ export default class FeedDetail extends Vue {
   feed: Feed | null = null
   async created() {
     this.feed = await getFeedDetail(this.$route.params.id as any)
+  }
+
+  updateCommentList(cmt: FeedComment) {
+    if (!this.feed!.commentList) {
+      this.feed!.commentList = []
+    }
+    this.feed!.commentList.unshift(cmt)
   }
 }
 </script>

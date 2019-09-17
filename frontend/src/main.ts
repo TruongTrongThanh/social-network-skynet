@@ -8,6 +8,11 @@ import 'bootstrap/dist/css/bootstrap.min.css'
 
 Vue.config.productionTip = false
 
+Vue.config.errorHandler = (err, vm, info) => {
+  console.log(err)
+  console.log(info)
+}
+
 new Vue({
   router,
   store,

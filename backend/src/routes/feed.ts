@@ -32,7 +32,7 @@ router.get('/feed', async ctx => {
 router.post('/feed', async ctx => {
   ctx.assert(ctx.state.userID, 401)
   try {
-    await postFeed(ctx.request.body as FeedForm, ctx.state.userID)
+    await postFeed(ctx.request.body, ctx.state.userID)
     ctx.status = 200
   } catch (err) {
     console.log(err)
@@ -51,7 +51,7 @@ router.post('/feed/vote', async ctx => {
 
 router.post('/feed/comment', async ctx => {
   ctx.assert(ctx.state.userID, 401)
-  await postComment(ctx.state.userID, ctx.request.body as FeedCommentForm)
+  ctx.body = await postComment(ctx.state.userID, ctx.request.body)
   ctx.status = 200
 })
 

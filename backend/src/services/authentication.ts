@@ -57,8 +57,10 @@ export async function getUserFromID(userID: string): Promise<User> {
 export function getUserIDFromJWT(jwtoken: string): Promise<string> {
   return new Promise((resolve, reject) => {
     jwt.verify(jwtoken, JWT_KEY, (err, decoded) => {
-      if (err) reject(err)
-      resolve((decoded as any).id)
+      if (err) {
+        console.log(err)
+        resolve(null)
+      } else resolve((decoded as any).id)
     })
   })
 }
