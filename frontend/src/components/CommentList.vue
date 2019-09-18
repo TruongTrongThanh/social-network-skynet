@@ -8,15 +8,8 @@
       :key="cm.id"
       class="mb-4"
     >
-      <comment-comp
-        :comment="cm"
-        class="mb-2"
-      />
-      <comment-comp
-        v-for="reply in cm.reply"
-        :key="reply.id"
-        :comment="reply"
-        class="ml-5"
+      <comment-group
+        :data="cm"
       />
     </div>
   </div>
@@ -26,12 +19,12 @@
 <script lang="ts">
 import { Vue, Component, Prop } from 'vue-property-decorator'
 import { FeedComment } from '@/models/feed'
-import CommentComp from '@/components/CommentComp.vue'
+import CommentGroup from '@/components/CommentGroup.vue'
 import socketIO from '@/apis/socket'
 
 @Component({
   components: {
-    CommentComp
+    CommentGroup
   }
 })
 export default class CommentList extends Vue {

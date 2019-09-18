@@ -1,6 +1,6 @@
 import * as Router from 'koa-router'
-import { getHomeFeeds, getFeed, postFeed, vote, getVote, postComment } from '../services/feed'
-import { FeedForm, FeedVote, FeedCommentForm } from '../models/feed'
+import { getHomeFeeds, getFeed, postFeed, vote, getVote, postComment, postReply } from '../services/feed'
+import {  FeedVote } from '../models/feed'
 import { getSocketIO } from '../socket'
 
 const router = new Router()
@@ -55,14 +55,10 @@ router.post('/feed/comment', async ctx => {
   ctx.status = 200
 })
 
-// router.get('/feed/comments', async ctx => {
-//   ctx.assert(ctx.state.userID, 401)
-//   try {
-//     //
-//   } catch (err) {
-//     console.timeLog(err)
-//     ctx.status = 500
-//   }
-// })
+router.post('/feed/comment/reply', async ctx => {
+  ctx.assert(ctx.state.userID, 401)
+  ctx.body = await postReply(ctx.state.userID, ctx.request.body)
+  ctx.status = 200
+})
 
 export default router.routes()

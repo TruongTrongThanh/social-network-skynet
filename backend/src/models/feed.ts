@@ -36,6 +36,11 @@ export interface FeedCommentForm {
   feedID: number
 }
 
+export interface CommentReplyForm {
+  content: string
+  commentID: number
+}
+
 export interface FeedVote {
   feedID: number
   voteState?: boolean

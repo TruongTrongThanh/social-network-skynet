@@ -33,3 +33,9 @@ export async function postComment(feedID: number, content: string): Promise<numb
   const res = await axios.post(url, { feedID, content })
   return res.data
 }
+
+export async function postReply(commentID: number, content: string): Promise<number> {
+  const url = API_URL + '/feed/comment/reply'
+  const res = await axios.post(url, { commentID, content })
+  return res.data
+}

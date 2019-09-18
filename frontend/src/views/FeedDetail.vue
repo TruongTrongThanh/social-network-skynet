@@ -41,9 +41,8 @@ export default class FeedDetail extends Vue {
 
   updateCommentList(cmt: FeedComment) {
     if (!this.feed!.commentList) {
-      this.feed!.commentList = []
-    }
-    this.feed!.commentList.unshift(cmt)
+      this.feed!.commentList = [cmt]
+    } else this.feed!.commentList.unshift(cmt)
   }
 }
 </script>

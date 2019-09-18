@@ -9,7 +9,7 @@
         :to="{ name: 'feed', params: { id: feed.id } }"
         class="time col-4 text-right"
       >
-        Posted {{ calcTime }} ago
+        {{ calcTime }}
       </router-link>
     </div>
     <div class="content row">

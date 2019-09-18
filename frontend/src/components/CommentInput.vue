@@ -9,7 +9,6 @@
         Comment
       </button>
     </div>
-    
   </div>
 </template>
 
