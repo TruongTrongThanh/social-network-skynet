@@ -19,7 +19,7 @@ export default new Router({
         {
           path: '/feed/:id',
           name: 'feed',
-          component: () => import('./views/FeedDetail.vue')
+          component: () => import('./views/FeedDetails.vue')
         }
       ]
     },

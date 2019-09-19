@@ -1,7 +1,7 @@
 <template>
   <div
     v-if="feed"
-    class="feed-detail container"
+    class="feed-details container"
   >
     <div class="row">
       <div class="col-8 feed-wrapper rounded">
@@ -33,7 +33,7 @@ import CommentList from '@/components/CommentList.vue'
     CommentList
   }
 })
-export default class FeedDetail extends Vue {
+export default class FeedDetails extends Vue {
   feed: Feed | null = null
   async created() {
     this.feed = await getFeedDetail(this.$route.params.id as any)

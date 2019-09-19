@@ -54,13 +54,14 @@ export async function getUserFromID(userID: string): Promise<User> {
   return res.rows[0] as User
 }
 
-export function getUserIDFromJWT(jwtoken: string): Promise<string> {
+export function getUserIDFromJWT(jwtoken?: string): Promise<string> {
   return new Promise((resolve, reject) => {
-    jwt.verify(jwtoken, JWT_KEY, (err, decoded) => {
-      if (err) {
-        console.log(err)
-        resolve(null)
-      } else resolve((decoded as any).id)
-    })
+    if (!jwtoken) resolve(null)
+    else {
+      jwt.verify(jwtoken, JWT_KEY, (err, decoded) => {
+        if (err) reject(err)
+        else resolve((decoded as any).id)
+      })
+    }
   })
 }
