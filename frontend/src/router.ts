@@ -20,6 +20,11 @@ export default new Router({
           path: '/feed/:id',
           name: 'feed',
           component: () => import('./views/FeedDetails.vue')
+        },
+        {
+          path: '/create-group',
+          name: 'group-create',
+          component: () => import('./views/GroupCreate.vue')
         }
       ]
     },

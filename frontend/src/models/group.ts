@@ -1,7 +1,21 @@
 import User from './user'
+import { Tag } from './tag'
+import { ImageFile } from './image'
 
-export default interface Group {
+export interface Group {
   id: number
-  avatar?: string
   name: string
+  intro: string
+  description: string
+  tags: Tag[]
+  avatar?: string
+  banner?: string
+}
+
+export interface GroupForm {
+  name: string
+  intro: string
+  description: string
+  tags: string[]
+  avatar?: ImageFile
 }

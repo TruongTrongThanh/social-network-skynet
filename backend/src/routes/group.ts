@@ -7,6 +7,8 @@ import { createGroup } from '../services/group'
 const router = new Router()
 
 router.post('/group', async ctx => {
+  ctx.assert(ctx.state.userID, 401)
+
   const rawForm: GroupBase64Form = ctx.request.body
   const urlForm: GroupURLForm = rawForm
 

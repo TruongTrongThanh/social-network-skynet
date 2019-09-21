@@ -1,5 +1,5 @@
 import User from './user'
-import Group from './group'
+import { Group } from './group'
 
 export interface Feed {
   id: number

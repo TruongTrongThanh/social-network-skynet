@@ -1,7 +1,7 @@
 import * as fs from 'fs'
-import { rejects } from 'assert'
+import * as path from 'path'
 
-const ROOT = 'E:\\Projects\\skynet\\backend\\static\\files'
+const ROOT = path.resolve(__dirname, '..\\..\\static\\files')
 const APP_URL = 'http://localhost:3000/files'
 
 export async function upload(binaryFile: Buffer, filename: string): Promise<string> {
