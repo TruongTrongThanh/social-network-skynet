@@ -1,6 +1,6 @@
 <template>
-  <div class="group-details">
-    this is group details
+  <div class="search-list container">
+    this is search list
   </div>
 </template>
 
@@ -8,7 +8,7 @@
 import { Vue, Component } from 'vue-property-decorator'
 
 @Component
-export default class GroupDetails extends Vue {}
+export default class SearchList extends Vue {}
 </script>
 
 <style scoped lang="scss">

@@ -15,13 +15,13 @@ export async function getFeed(userID: string, feedID: number): Promise<Feed> {
   return res.rows[0] as Feed
 }
 
-export async function postFeed(form: FeedForm, userID: string) {
+export async function postFeed(form: FeedForm, userID: string): Promise<number> {
   const query = `
-    INSERT INTO public."Feed" (original_poster, "group", content, created_at)
-    VALUES ($1, $2, $3, $4);
+    CALL public.create_feed($1, $2, $3, $4, $5, $6, 0)
   `
-  const params = [userID, form.groupID, form.content, new Date()]
-  await PB.query(query, params)
+  const params = [userID, form.groupID, form.content, form.imageURL, new Date(), form.tags]
+  const res = await PB.query(query, params)
+  return res.rows[0].returning_id
 }
 
 export async function vote(userID: string, form: FeedVote) {

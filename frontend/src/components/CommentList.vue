@@ -29,9 +29,9 @@ import socketIO from '@/apis/socket'
 })
 export default class CommentList extends Vue {
   @Prop({type: Number, required: true}) feedId!: number
-  @Prop({type: Array}) init!: FeedComment[]
+  @Prop({type: Array, default: []}) data!: FeedComment[]
 
-  commentList: FeedComment[] = this.init
+  commentList: FeedComment[] = this.data
 }
 </script>
 

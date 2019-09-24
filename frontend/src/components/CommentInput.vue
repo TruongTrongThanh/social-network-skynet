@@ -33,7 +33,8 @@ export default class CommentInput extends Vue {
       content: this.content,
       upvote: 0,
       downvote: 0,
-      createdAt: new Date().toString()
+      createdAt: new Date().toString(),
+      replies: []
     }
     this.$emit('posted', cmt)
   }

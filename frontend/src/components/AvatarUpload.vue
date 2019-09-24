@@ -28,6 +28,7 @@ export default class AvatarUpload extends Vue {
       const reader = new FileReader()
       reader.onload = (e: any) => {
         this.backgroundImage = `url(${e.target.result})`
+        this.$emit('image-changed', e.target.result)
       }
       reader.readAsDataURL(input.files[0])
     }

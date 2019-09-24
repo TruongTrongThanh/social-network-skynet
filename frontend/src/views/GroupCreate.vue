@@ -1,5 +1,5 @@
 <template>
-  <div class="group-create container p-5 mb-3 rounded">
+  <div class="group-create container px-5 py-4 mb-3 rounded">
     <div class="text-center">
       <img class="mb-4" :src="require('@/assets/community.png')" width="200">
     </div>

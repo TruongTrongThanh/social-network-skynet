@@ -1,19 +1,33 @@
 <template>
-  <div class="feed rounded container-fluid p-0">
-    <div class="title rounded-top row justify-content-between align-items-center py-2">
-      <div class="col-4">
-        <img :src="feed.originalPoster.avatar || 'https://www.w3schools.com/howto/img_avatar.png'" class="mr-2" width="40">
-        <span class="fullname">{{ feed.originalPoster.fullname }}</span>
+  <div class="feed rounded p-0" @click="$emit('click')">
+    <div class="group row rounded-top py-1">
+      <div class="col">
+        <router-link :to="{ name: 'group-details', params: { id: feed.group.id } }">
+          <img :src="require('@/assets/empty-avatar.png')" class="group-avatar mr-2" width="30">
+          <span class="group-name">{{ feed.group.name }}</span>
+        </router-link>
       </div>
-      <router-link
-        :to="{ name: 'feed', params: { id: feed.id } }"
-        class="time col-4 text-right"
-      >
-        {{ calcTime }}
-      </router-link>
     </div>
-    <div class="content row">
-      {{ feed.content }}
+    <div class="title row justify-content-between pt-2">
+      <div class="col-4">
+        <div class="d-flex">
+          <img :src="feed.originalPoster.avatar || require('@/assets/empty-avatar.png')" class="rounded mr-2" width="40">
+          <span class="fullname">{{ feed.originalPoster.fullname }}</span>
+        </div>
+      </div>
+      <div class="col-2 text-right">
+        <router-link :to="{ name: 'feed', params: { id: feed.id } }" class="time">{{ calcTime }}</router-link>
+      </div>
+    </div>
+    <div class="content row" v-text="feed.content"/>
+    <div v-if="feed.image" class="image row">
+      <div class="col">
+        <img
+        :src="feed.image"
+        :class="{ 'scale-down': isScaleDown }"
+        class="feed-image mb-2"
+        >
+      </div>
     </div>
     <div class="footer row rounded-bottom justify-content-center align-items-center">
       <div class="col-5">
@@ -22,7 +36,7 @@
             <down-arrow
               :class="{ upvote: feed.voteState === true }"
               class="icon arrow rotate-180 clickable mr-1"
-              @click="vote(true)"
+              @click.stop="vote(true)"
             />
             <span :class="{ 'upvote-color': feed.voteState === true }">{{ feed.upvote }}</span>
           </div>
@@ -38,7 +52,7 @@
             <down-arrow
               :class="{ downvote: feed.voteState === false }"
               class="icon arrow clickable ml-1"
-              @click="vote(false)"
+              @click.stop="vote(false)"
             />
           </div>
         </div>
@@ -74,6 +88,7 @@ import socketIO from '@/apis/socket'
 })
 export default class FeedComp extends Mixins(CalcTimeMixin) {
   @Prop({type: Object, required: true}) readonly init!: Feed
+  @Prop({type: Boolean, default: false}) readonly isScaleDown!: boolean
 
   feed: Feed = this.init
 
@@ -103,6 +118,18 @@ export default class FeedComp extends Mixins(CalcTimeMixin) {
   .feed {
     background-color: white;
 
+    .group {
+      background-color: #f8f8f8;
+
+      .group-avatar {
+        border-radius: 20px;
+      }
+      .group-name {
+        font-size: 0.9em;
+        color: gray;
+      }
+    }
+
     .title {
       .time {
         color: #848484;
@@ -114,7 +141,19 @@ export default class FeedComp extends Mixins(CalcTimeMixin) {
     }
     .content {
       padding: 10px 20px;
+      white-space: pre-line;
     }
+
+    .feed-image {
+      width: 100%;
+      background-color: #696969;
+
+      &.scale-down {
+        height: 500px;
+        object-fit: scale-down;
+      }
+    }
+
     .footer {
       height: 2.2rem;
       text-align: center;

@@ -43,9 +43,14 @@ export default class CommentGroup extends Vue {
   comment: FeedComment = this.data
   expandToggle: boolean = false
 
+  created() {
+    if (!this.comment.replies) {
+      this.comment.replies = []
+    }
+  }
+
   replyListUpdate(reply: FeedComment) {
-    if (!this.comment.replies) this.comment.replies = [reply]
-    else this.comment.replies.push(reply)
+    this.comment.replies.push(reply)
   }
 }
 </script>

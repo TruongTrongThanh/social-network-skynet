@@ -1,7 +1,9 @@
 import * as Router from 'koa-router'
 import { getHomeFeeds, getFeed, postFeed, vote, getVote, postComment, postReply } from '../services/feed'
-import {  FeedVote } from '../models/feed'
+import {  FeedVote, FeedForm } from '../models/feed'
 import { getSocketIO } from '../socket'
+import { upload } from '../services/storage'
+import * as shortID from 'short-uuid'
 
 const router = new Router()
 const io = getSocketIO()
@@ -31,13 +33,11 @@ router.get('/feed', async ctx => {
 
 router.post('/feed', async ctx => {
   ctx.assert(ctx.state.userID, 401)
-  try {
-    await postFeed(ctx.request.body, ctx.state.userID)
-    ctx.status = 200
-  } catch (err) {
-    console.log(err)
-    ctx.status = 500
-  }
+  const form: FeedForm = ctx.request.body
+  const img = Buffer.from(form.image.split(',')[1], 'base64')
+  form.imageURL = await upload(img, `feed/${shortID.generate()}.jpg`)
+  ctx.body = await postFeed(form, ctx.state.userID)
+  ctx.status = 200
 })
 
 router.post('/feed/vote', async ctx => {

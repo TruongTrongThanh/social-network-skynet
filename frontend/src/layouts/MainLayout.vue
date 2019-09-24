@@ -1,5 +1,5 @@
 <template>
-  <div class="main-layout container-fluid">
+  <div class="main-layout">
     <router-view class="top-offset"/>
     <navbar v-if="authUser" :auth-user="authUser"/>
     <div
@@ -20,6 +20,8 @@ import { Route, RawLocation } from 'vue-router'
 import { getUser } from '@/apis/authentication'
 import User from '@/models/user'
 import { NextFunction } from '@/models/vue-api'
+import { Group } from '@/models/group'
+import { getGroupsFromUserID } from '@/apis/group'
 
 Component.registerHooks([
   'beforeRouteEnter',
@@ -38,9 +40,11 @@ export default class MainLayout extends Vue {
 
   @Mutation sidebarToggle!: () => void
   @Mutation setAuthUser!: (user: User) => void
+  @Mutation setFollowingGroups!: (list: Group[]) => void
 
-  setUser(val: User) {
-    this.setAuthUser(val)
+  dataInit(u: User, gl: Group[]) {
+    this.setAuthUser(u)
+    this.setFollowingGroups(gl)
   }
 
   mounted() {
@@ -50,7 +54,8 @@ export default class MainLayout extends Vue {
   async beforeRouteEnter(to: Route, from: Route, next: NextFunction) {
     try {
       const authUser = await getUser()
-      next((vm: any) => vm.setUser(authUser))
+      const groupList = await getGroupsFromUserID()
+      next((vm: any) => vm.dataInit(authUser, groupList))
     } catch (err) {
       console.log(err)
       next('/entry')

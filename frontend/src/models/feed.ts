@@ -11,9 +11,9 @@ export interface Feed {
   comment: number
   share: number
   createdAt: string
+  commentList: FeedComment[]
   group?: Group
   image?: string
-  commentList?: FeedComment[]
 }
 
 export interface FeedComment {
@@ -23,10 +23,17 @@ export interface FeedComment {
   upvote: number
   downvote: number
   createdAt: string
-  replies?: FeedComment[]
+  replies: FeedComment[]
 }
 
 export interface FeedVoteNumber {
   upvote: number
   downvote: number
+}
+
+export interface FeedForm {
+  content: string
+  image: string
+  groupID: number
+  tags: string[]
 }

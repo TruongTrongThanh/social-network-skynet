@@ -4,15 +4,7 @@
     class="feed-details container"
   >
     <div class="row">
-      <div class="col-8 feed-wrapper rounded">
-        <feed-comp :init="feed"/>
-        <comment-input
-          class="mt-3"
-          @posted="updateCommentList"
-        />
-        <hr class="mt-4">
-        <comment-list :feed-id="feed.id" :init="feed.commentList"/>
-      </div>
+      <feed-wrapper :data="feed" class="col-8"/>
       <div class="col ml-3">This is post liên quan</div>
     </div>
   </div>
@@ -22,15 +14,11 @@
 import { Vue, Component } from 'vue-property-decorator'
 import { Feed, FeedComment } from '@/models/feed'
 import { getFeedDetail } from '@/apis/feed'
-import FeedComp from '@/components/FeedComp.vue'
-import CommentInput from '@/components/CommentInput.vue'
-import CommentList from '@/components/CommentList.vue'
+import FeedWrapper from '@/components/FeedWrapper.vue'
 
 @Component({
   components: {
-    FeedComp,
-    CommentInput,
-    CommentList
+    FeedWrapper
   }
 })
 export default class FeedDetails extends Vue {
@@ -40,9 +28,7 @@ export default class FeedDetails extends Vue {
   }
 
   updateCommentList(cmt: FeedComment) {
-    if (!this.feed!.commentList) {
-      this.feed!.commentList = [cmt]
-    } else this.feed!.commentList.unshift(cmt)
+    this.feed!.commentList.unshift(cmt)
   }
 }
 </script>

@@ -1,5 +1,5 @@
 <template>
-  <div class="home">
+  <div class="home container-fluid">
     <div class="row align-items-start justify-content-center">
       <div class="feed-list col-md-6 mr-5">
         <feed-input class="mb-3"/>
@@ -7,7 +7,9 @@
           v-for="feed in feeds"
           :key="feed.id"
           :init="feed"
-          class="px-3 mb-3"
+          :is-scale-down="true"
+          class="px-3 mb-3 clickable raise-border"
+          @click="getFeed(feed.id)"
         />
       </div>
       <div class="trending sticky-top col-md-3">
@@ -16,6 +18,13 @@
         <div class="copyright text-muted">&copy; {{ new Date().getFullYear() }} Skynet, Open University. All rights reserved</div>
       </div>
     </div>
+    <div
+      v-if="clickedFeed"
+      class="window-feed-details container"
+    >
+      <feed-wrapper :data="clickedFeed"/>
+    </div>
+    <div v-if="clickedFeed" class="blackscreen" @click="clickedFeed = null"></div>
   </div>
 </template>
 
@@ -27,7 +36,8 @@ import Famous from '@/components/Famous.vue'
 import PopularLang from '@/components/PopularLang.vue'
 import FeedInput from '@/components/FeedInput.vue'
 import { Feed } from '@/models/feed'
-import { getHomeFeeds } from '@/apis/feed'
+import { getHomeFeeds, getFeedDetail } from '@/apis/feed'
+import FeedWrapper from '@/components/FeedWrapper.vue'
 
 @Component({
   components: {
@@ -35,30 +45,61 @@ import { getHomeFeeds } from '@/apis/feed'
     FeedComp,
     Famous,
     PopularLang,
-    FeedInput
+    FeedInput,
+    FeedWrapper
   }
 })
 export default class Home extends Vue {
   feeds: Feed[] = []
 
+  clickedFeed: Feed | null = null
+
   async created() {
-    try {
-      this.feeds = await getHomeFeeds()
-    } catch (err) {
-      console.log(err)
-    }
+    this.feeds = await getHomeFeeds()
+  }
+
+  async getFeed(id: number) {
+    this.clickedFeed = await getFeedDetail(id)
   }
 }
 </script>
 
 <style scoped lang="scss">
-  .home {
-    .trending {
-      top: $topOffset;
-    }
+$feed-width: 800px;
 
-    .copyright {
-      font-size: 0.9rem;
-    }
+.home {
+  .trending {
+    top: $topOffset;
   }
+
+  .copyright {
+    font-size: 0.9rem;
+  }
+
+  .window-feed-details {
+    position: fixed;
+    top: $topOffset + 10px;
+    left: 50%;
+    width: $feed-width;
+    height: 600px;
+    margin-left: - ($feed-width / 2);
+    z-index: 1023;
+    background-color: white;
+    overflow: auto;
+  }
+
+  .blackscreen {
+    background-color: #00000045;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1022;
+  }
+
+  .raise-border:hover {
+    border: 1px solid #979797;
+  }
+}
 </style>

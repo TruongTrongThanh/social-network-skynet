@@ -25,6 +25,16 @@ export default new Router({
           path: '/create-group',
           name: 'group-create',
           component: () => import('./views/GroupCreate.vue')
+        },
+        {
+          path: '/group/:id',
+          name: 'group-details',
+          component: () => import('./views/GroupDetails.vue')
+        },
+        {
+          path: '/search',
+          name: 'search-list',
+          component: () => import('./views/SearchList.vue')
         }
       ]
     },

@@ -1,5 +1,5 @@
 import axios from 'axios'
-import { Feed, FeedVoteNumber, FeedComment } from '@/models/feed'
+import { Feed, FeedVoteNumber, FeedForm } from '@/models/feed'
 
 const API_URL = process.env.VUE_APP_SERVER_API
 
@@ -11,15 +11,16 @@ export async function getHomeFeeds(): Promise<Feed[]> {
   return res.data
 }
 
-export async function getFeedDetail(feedID: number) {
+export async function getFeedDetail(feedID: number): Promise<Feed> {
   const url = API_URL + `/feed?id=${feedID}`
   const res = await axios.get(url)
   return res.data
 }
 
-export async function postFeed(content: string, groupID?: string) {
+export async function postFeed(form: FeedForm): Promise<number> {
   const url = API_URL + '/feed'
-  await axios.post(url, { content, groupID })
+  const res = await axios.post(url, form)
+  return res.data
 }
 
 export async function voteFeed(feedID: number, voteState: boolean | null): Promise<FeedVoteNumber> {

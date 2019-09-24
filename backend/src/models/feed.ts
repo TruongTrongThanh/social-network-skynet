@@ -1,5 +1,5 @@
 import User from './user'
-import Group from './group'
+import { Group } from './group'
 
 export interface Feed {
   id: number
@@ -28,7 +28,10 @@ export interface FeedComment {
 
 export interface FeedForm {
   content: string
-  groupID?: string
+  image: string
+  groupID: string
+  tags: string[]
+  imageURL?: string
 }
 
 export interface FeedCommentForm {
