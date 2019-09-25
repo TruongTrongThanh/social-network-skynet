@@ -5,7 +5,7 @@ export async function getHomeFeeds(userID: string): Promise<Feed[]> {
   const query = `SELECT * FROM get_feeds_from_user($1);`
   const params = [userID]
   const res = await PB.query(query, params)
-  return res.rows as Feed[]
+  return res.rows
 }
 
 export async function getFeed(userID: string, feedID: number): Promise<Feed> {
@@ -17,9 +17,9 @@ export async function getFeed(userID: string, feedID: number): Promise<Feed> {
 
 export async function postFeed(form: FeedForm, userID: string): Promise<number> {
   const query = `
-    CALL public.create_feed($1, $2, $3, $4, $5, $6, 0)
+    CALL public.create_feed($1, $2, $3, $4, $5, $6, $7, 0)
   `
-  const params = [userID, form.groupID, form.content, form.imageURL, new Date(), form.tags]
+  const params = [userID, form.groupID, form.content, form.imageURL, new Date(), form.tags, form.shareFromFeedID]
   const res = await PB.query(query, params)
   return res.rows[0].returning_id
 }

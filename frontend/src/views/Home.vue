@@ -10,6 +10,7 @@
           :is-scale-down="true"
           class="px-3 mb-3 clickable raise-border"
           @click="getFeed(feed.id)"
+          @share-click="clickedShareFeed = feed"
         />
       </div>
       <div class="trending sticky-top col-md-3">
@@ -18,13 +19,23 @@
         <div class="copyright text-muted">&copy; {{ new Date().getFullYear() }} Skynet, Open University. All rights reserved</div>
       </div>
     </div>
-    <div
+
+    <!-- feed mini-window -->
+    <feed-wrapper
       v-if="clickedFeed"
-      class="window-feed-details container"
-    >
-      <feed-wrapper :data="clickedFeed"/>
-    </div>
-    <div v-if="clickedFeed" class="blackscreen" @click="clickedFeed = null"></div>
+      class="mini-window-content container"
+      :data="clickedFeed"
+      @share-click="clickedShareFeed = clickedFeed"
+    />
+    <div v-show="clickedFeed" class="blackscreen" @click="clickedFeed = null"></div>
+
+    <!-- share mini-window -->
+    <feed-input
+      v-if="clickedShareFeed"
+      :shared-feed="clickedShareFeed"
+      class="mini-window-content on-top"
+    />
+    <div v-show="clickedShareFeed" class="blackscreen on-top" @click="clickedShareFeed = null"></div>
   </div>
 </template>
 
@@ -53,6 +64,7 @@ export default class Home extends Vue {
   feeds: Feed[] = []
 
   clickedFeed: Feed | null = null
+  clickedShareFeed: Feed | null = null
 
   async created() {
     this.feeds = await getHomeFeeds()
@@ -75,17 +87,21 @@ $feed-width: 800px;
   .copyright {
     font-size: 0.9rem;
   }
-
-  .window-feed-details {
+  
+  .mini-window-content {
     position: fixed;
     top: $topOffset + 10px;
     left: 50%;
     width: $feed-width;
-    height: 600px;
+    max-height: 600px;
     margin-left: - ($feed-width / 2);
-    z-index: 1023;
     background-color: white;
     overflow: auto;
+    z-index: 1023;
+
+    &.on-top {
+      z-index: 1024;
+    }
   }
 
   .blackscreen {
@@ -96,6 +112,10 @@ $feed-width: 800px;
     width: 100%;
     height: 100%;
     z-index: 1022;
+
+    &.on-top {
+      z-index: 1023;
+    }
   }
 
   .raise-border:hover {

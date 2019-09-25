@@ -5,7 +5,7 @@
     @click="$refs.tagInput.focus()"
   >
     <div
-      v-for="t in tags"
+      v-for="t in data"
       :key="t"
       class="tag d-inline-flex align-items-center mr-1"
     >
@@ -17,7 +17,7 @@
     <input
       ref="tagInput"
       v-model="tag"
-      :placeholder="tags.length === 0 ? placeHolder : ''"
+      :placeholder="data.length === 0 ? placeHolder : ''"
       type="text"
       id="tags-input"
       class="tag-input"
@@ -29,31 +29,40 @@
 </template>
 
 <script lang="ts">
-import { Vue, Component, Prop } from 'vue-property-decorator'
+import { Vue, Component, Prop, Watch } from 'vue-property-decorator'
 
 @Component
 export default class TagsInput extends Vue {
-  @Prop({type: String}) placeHolder!: string
+  @Prop({ type: Array, required: true }) readonly data!: string[]
+  @Prop({ type: String }) placeHolder!: string
 
-  tags: string[] = []
+  tags: string[] = this.data
   tag: string = ''
   focusToggle: boolean = false
+
+  @Watch('data')
+  onDataChanged(newVal: string[], oldVal: string[]) {
+    this.tags = this.data
+  }
 
   insertToTags() {
     if (this.tag.trim() !== '') {
       this.tags.push(this.tag)
-      this.$emit('tags-changed', this.tags)
+      this.$emit('update:data', this.tags)
     }
     this.tag = ''
   }
+
   remove(t: string) {
-    const index = this.tags.findIndex(tag => t === tag)
+    const index = this.data.findIndex(tag => t === tag)
     this.tags.splice(index, 1)
-    this.$emit('tags-changed', this.tags)
+    this.$emit('update:data', this.tags)
   }
+
   onFocus() {
     this.focusToggle = true
   }
+
   onBlur() {
     this.focusToggle = false
   }

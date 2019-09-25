@@ -17,9 +17,22 @@ export default new Vuex.Store<RootState>({
     authUser: null,
     followingGroups: []
   },
+
+  getters: {
+    memberGroups(state): Group[] {
+      return state.followingGroups.filter(g => g.role === 'member')
+    },
+    adminGroups(state): Group[] {
+      return state.followingGroups.filter(g => g.role === 'admin')
+    }
+  },
+
   mutations: {
     sidebarToggle(state) {
       state.sidebarDisplay = !state.sidebarDisplay
+    },
+    setSidebarDisplay(state, val: boolean) {
+      state.sidebarDisplay = val
     },
     setAuthUser(state, val: User) {
       state.authUser = val

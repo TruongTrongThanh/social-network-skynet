@@ -16,3 +16,8 @@ export async function getGroupsFromUserID(): Promise<Group[]> {
   return res.data
 }
 
+export async function getTagsFromGroup(groupID: number): Promise<string[]> {
+  const url = API_URL + `/group/tags?id=${groupID}`
+  const res = await axios.get(url)
+  return res.data
+}

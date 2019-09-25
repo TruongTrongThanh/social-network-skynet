@@ -1,7 +1,7 @@
 <template>
   <div class="brand-toggler navbar-brand">
     <span
-      class="navbar-toggler-icon clickable mr-1"
+      class="navbar-toggler-icon clickable mr-3"
       @click="sidebarToggle"
     />
     <router-link

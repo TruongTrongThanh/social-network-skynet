@@ -11,9 +11,10 @@ export interface Feed {
   comment: number
   share: number
   createdAt: Date
+  commentList: FeedComment[]
   group?: Group
   image?: string
-  commentList?: FeedComment[]
+  shareFromFeed?: Feed
 }
 
 export interface FeedComment {
@@ -32,6 +33,7 @@ export interface FeedForm {
   groupID: string
   tags: string[]
   imageURL?: string
+  shareFromFeedID?: number
 }
 
 export interface FeedCommentForm {
@@ -46,10 +48,12 @@ export interface CommentReplyForm {
 
 export interface FeedVote {
   feedID: number
-  voteState?: boolean
+  voteState: boolean | null
 }
 
 export interface FeedVoteNumber {
   upvote: number
   downvote: number
+  voteState: boolean | null
+  userID: string
 }

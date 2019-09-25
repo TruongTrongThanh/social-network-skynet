@@ -3,6 +3,7 @@
     <div class="group row rounded-top py-1">
       <div class="col">
         <router-link :to="{ name: 'group-details', params: { id: feed.group.id } }">
+          <span v-if="isInnerSharedFeed" class="group-name mr-2">Crosspost từ</span>
           <img :src="require('@/assets/empty-avatar.png')" class="group-avatar mr-2" width="30">
           <span class="group-name">{{ feed.group.name }}</span>
         </router-link>
@@ -29,7 +30,20 @@
         >
       </div>
     </div>
-    <div class="footer row rounded-bottom justify-content-center align-items-center">
+    <div v-if="!feed.image && feed.shareFromFeed" class="row">
+      <div class="col">
+        <feed-comp
+          :init="feed.shareFromFeed"
+          :is-scale-down="isScaleDown"
+          :is-inner-shared-feed="true"
+          class="share-feed px-3 mb-2"
+        />
+      </div>
+    </div>
+    <div 
+      v-if="feed.upvote && feed.downvote && feed.share"
+      class="footer row rounded-bottom justify-content-center align-items-center"
+    >
       <div class="col-5">
         <div class="row justify-content-center align-items-center">
           <div class="col">
@@ -41,9 +55,13 @@
             <span :class="{ 'upvote-color': feed.voteState === true }">{{ feed.upvote }}</span>
           </div>
           <div class="col-6 ratio-bar position-relative">
-            <div class="ratio-bar-upvote position-absolute"/>
+            <div class="ratio-bar-novote position-absolute"/>
             <div
-              :style="{ width: `${(feed.downvote / (feed.upvote + feed.downvote)) * 100}%` }"
+              :style="{ width: `${upvoteRatio}%` }"
+              class="ratio-bar-upvote position-absolute"
+            />
+            <div
+              :style="{ width: `${downvoteRatio}%` }"
               class="ratio-bar-downvote position-absolute"
             />
           </div>
@@ -61,8 +79,8 @@
         <comment class="icon comment"/>
         {{ feed.comment }}
       </div>
-      <div class="col-2">
-        <share class="icon share"/>
+      <div v-if="!feed.shareFromFeed" class="col-2">
+        <share class="icon share" @click.stop="$emit('share-click')"/>
         {{ feed.share }}
       </div>
     </div>
@@ -78,6 +96,8 @@ import Share from '@/assets/icons/share.svg'
 import { Feed, FeedVoteNumber } from '@/models/feed'
 import { voteFeed } from '@/apis/feed'
 import socketIO from '@/apis/socket'
+import { State } from 'vuex-class'
+import User from '@/models/user'
 
 @Component({
   components: {
@@ -87,15 +107,36 @@ import socketIO from '@/apis/socket'
   }
 })
 export default class FeedComp extends Mixins(CalcTimeMixin) {
-  @Prop({type: Object, required: true}) readonly init!: Feed
-  @Prop({type: Boolean, default: false}) readonly isScaleDown!: boolean
+  @Prop({ type: Object, required: true }) readonly init!: Feed
+  @Prop({ type: Boolean, default: false }) readonly isScaleDown!: boolean
+  @Prop({ type: Boolean, default: false }) readonly isInnerSharedFeed!: boolean
+
+  @State readonly authUser!: User
 
   feed: Feed = this.init
+  HasOtherListener: boolean = false
+
+  get upvoteRatio(): number {
+    if (+this.feed.upvote === 0 && +this.feed.downvote === 0) return 0
+    return (this.feed.upvote / (+this.feed.upvote + +this.feed.downvote)) * 100
+  }
+
+  get downvoteRatio(): number {
+    if (+this.feed.upvote === 0 && +this.feed.downvote === 0) return 0
+    return (this.feed.downvote / (+this.feed.upvote + +this.feed.downvote)) * 100
+  }
 
   created() {
+    if (socketIO.hasListeners(`feed-vote-update-${this.feed.id}`)) {
+      this.HasOtherListener = true
+    }
+
     socketIO.on(`feed-vote-update-${this.feed.id}`, (data: FeedVoteNumber) => {
       this.feed.upvote = data.upvote
       this.feed.downvote = data.downvote
+      if (data.userID === this.authUser.id) {
+        this.feed.voteState = data.voteState
+      }
     })
   }
 
@@ -109,7 +150,9 @@ export default class FeedComp extends Mixins(CalcTimeMixin) {
   }
 
   beforeDestroy() {
-    socketIO.off(`feed-vote-update-${this.feed.id}`)
+    if (!this.HasOtherListener) {
+      socketIO.off(`feed-vote-update-${this.feed.id}`)
+    }
   }
 }
 </script>
@@ -154,6 +197,10 @@ export default class FeedComp extends Mixins(CalcTimeMixin) {
       }
     }
 
+    .share-feed {
+      border: 2px dashed gray;
+    }
+
     .footer {
       height: 2.2rem;
       text-align: center;
@@ -165,19 +212,27 @@ export default class FeedComp extends Mixins(CalcTimeMixin) {
         margin: 0 auto;
         height: 5px;
 
-        .ratio-bar-upvote {
+        .ratio-bar-upvote,
+        .ratio-bar-downvote,
+        .ratio-bar-novote {
           top: 0;
-          left: 0;
-          width: 100%;
           height: 100%;
+        }
+
+        .ratio-bar-upvote {
+          left: 0;
           background-color: $themeColor;
         }
 
         .ratio-bar-downvote {
-          top: 0;
           right: 0;
-          height: 100%;
           background-color: invert($themeColor);
+        }
+
+        .ratio-bar-novote {
+          width: 100%;
+          left: 0;
+          background-color: #afafaf;
         }
       }
     }

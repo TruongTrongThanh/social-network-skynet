@@ -1,5 +1,4 @@
 import User from './user'
-import { Tag } from './tag'
 
 export interface Group {
   id: number
@@ -7,7 +6,7 @@ export interface Group {
   role: string
   intro?: string
   description?: string
-  tags?: Tag[]
+  tags: string[]
   avatar?: string
   banner?: string
 }

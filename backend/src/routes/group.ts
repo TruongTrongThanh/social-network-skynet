@@ -2,7 +2,7 @@ import * as Router from 'koa-router'
 import { GroupBase64Form, GroupURLForm } from '../models/group'
 import { upload } from '../services/storage'
 import * as shortID from 'short-uuid'
-import { createGroup, getGroupsFromUserID } from '../services/group'
+import { createGroup, getGroupsFromUserID, getTagsFromGroup } from '../services/group'
 
 const router = new Router()
 
@@ -34,6 +34,12 @@ router.get('/group', async ctx => {
   } else {
     ctx.status = 501
   }
+})
+
+router.get('/group/tags', async ctx => {
+  ctx.assert(ctx.state.userID, 401)
+  ctx.body = await getTagsFromGroup(ctx.query.id)
+  ctx.status = 200
 })
 
 export default router.routes()

@@ -34,8 +34,10 @@ router.get('/feed', async ctx => {
 router.post('/feed', async ctx => {
   ctx.assert(ctx.state.userID, 401)
   const form: FeedForm = ctx.request.body
-  const img = Buffer.from(form.image.split(',')[1], 'base64')
-  form.imageURL = await upload(img, `feed/${shortID.generate()}.jpg`)
+  if (form.image && !form.shareFromFeedID) {
+    const img = Buffer.from(form.image.split(',')[1], 'base64')
+    form.imageURL = await upload(img, `feed/${shortID.generate()}.jpg`)
+  }
   ctx.body = await postFeed(form, ctx.state.userID)
   ctx.status = 200
 })
@@ -45,6 +47,8 @@ router.post('/feed/vote', async ctx => {
   const feedVote = ctx.request.body as FeedVote
   await vote(ctx.state.userID, feedVote)
   const feedNumber = await getVote(feedVote.feedID)
+  feedNumber.voteState = feedVote.voteState
+  feedNumber.userID = ctx.state.userID
   io.emit(`feed-vote-update-${feedVote.feedID}`, feedNumber)
   ctx.status = 200
 })

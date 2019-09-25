@@ -1,6 +1,8 @@
 <template>
   <div class="feed-input rounded">
-    <div class="who-where rounded-top px-3 py-2">Đăng bài viết</div>
+    <div class="who-where rounded-top px-3 py-2">
+      {{ sharedFeed ? 'Chia sẻ bài viết' : 'Đăng bài viết' }}
+    </div>
     <div class="p-3 container-fluid">
       <div class="row">
         <div class="col">
@@ -11,10 +13,28 @@
         <div class="col">
           <div>
             <tags-input
-              class="form-control-sm"
               :place-holder="'Gắn tag'"
-              @tags-changed="(tags) => form.tags = tags"
+              :data.sync="form.tags"
+              class="form-control-sm"
             />
+          </div>
+        </div>
+      </div>
+      <div v-if="sharedFeed" class="row mt-2">
+        <div class="col">
+          <div class="share-section d-flex p-1 justify-content-center align-items-center rounded">
+            <div class="mr-2">Chia sẻ bài đăng từ</div>
+            <img
+              :src="sharedFeed.originalPoster.avatar || require('@/assets/empty-avatar.png')"
+              class="avatar mr-1 rounded-circle"
+            >
+            <div class="name mr-2 font-weight-bold">{{ sharedFeed.originalPoster.fullname }}</div>
+            <div class="mr-2">trong nhóm</div>
+            <img
+              :src="sharedFeed.group.avatar || require('@/assets/empty-avatar.png')"
+              class="avatar mr-1 rounded-circle"
+            >
+            <div class="name font-weight-bold">{{ sharedFeed.group.name }}</div>
           </div>
         </div>
       </div>
@@ -34,8 +54,10 @@
         </div>
         <div class="col">
           <div class="d-flex justify-content-end">
-            <image-input @image-changed="(img) => form.image = img"/>
-            <button class="btn btn-success btn-sm px-4 ml-2" @click="post">Đăng bài</button>
+            <image-input v-if="!sharedFeed" @image-changed="(img) => form.image = img"/>
+            <button class="btn btn-success btn-sm px-4 ml-2" @click="post">
+              {{ sharedFeed ? 'Chia sẻ' : 'Đăng bài' }}
+            </button>
           </div>
         </div>
       </div>
@@ -45,13 +67,14 @@
 </template>
 
 <script lang="ts">
-import { Vue, Component } from 'vue-property-decorator'
+import { Vue, Component, Prop, Watch } from 'vue-property-decorator'
 import { postFeed } from '@/apis/feed'
 import { Group } from '@/models/group'
 import { State } from 'vuex-class'
 import TagsInput from '@/components/TagsInput.vue'
 import ImageInput from '@/components/FeedImageInput.vue'
-import { FeedForm } from '@/models/feed'
+import { FeedForm, Feed } from '@/models/feed'
+import { getTagsFromGroup } from '@/apis/group'
 
 @Component({
   components: {
@@ -60,13 +83,22 @@ import { FeedForm } from '@/models/feed'
   }
 })
 export default class FeedInput extends Vue {
+  @Prop({ type: Object }) readonly sharedFeed!: Feed
+
   @State followingGroups!: Group[]
 
   form: FeedForm = {
     content: '',
     image: '',
     groupID: 0,
-    tags: []
+    tags: [],
+    shareFromFeedID: this.sharedFeed ? this.sharedFeed.id : undefined
+  }
+
+  @Watch('form.groupID')
+  async onFormGroupIDChanged(newVal: number, oldVal: number) {
+    const tags = await getTagsFromGroup(newVal)
+    Vue.set(this.form, 'tags', tags)
   }
 
   async post() {
@@ -82,6 +114,24 @@ export default class FeedInput extends Vue {
 
     .who-where {
       background-color: #f8f8f8;
+    }
+
+    .share-section {
+      background-color: #ececec;
+      border: 2px dashed #bfbebe;
+
+      .avatar {
+        object-fit: cover;
+        width: 22px;
+        height: 22px;
+      }
+
+      .name {
+        max-width: 30%;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
     }
   }
 </style>

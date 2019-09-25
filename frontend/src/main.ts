@@ -14,6 +14,11 @@ Vue.config.errorHandler = (err, vm, info) => {
   console.log(info)
 }
 
+router.beforeEach((to, from, next) => {
+  store.commit('setSidebarDisplay', false)
+  next()
+})
+
 new Vue({
   router,
   store,

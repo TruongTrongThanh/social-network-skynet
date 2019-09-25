@@ -21,4 +21,13 @@ export async function getGroupsFromUserID(userID: string): Promise<Group[]> {
   return res.rows
 }
 
+export async function getTagsFromGroup(groupID: number): Promise<string[]> {
+  const query = `
+    SELECT array_agg(name) AS tags FROM "Tag" WHERE "Tag".group_ids @> Array[$1::integer]
+  `
+  const params = [groupID]
+  const res = await PB.query(query, params)
+  return res.rows[0].tags
+}
+
 // export async function getGroupDetails(groupID: number)

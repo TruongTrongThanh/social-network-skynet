@@ -32,9 +32,9 @@ export default new Router({
           component: () => import('./views/GroupDetails.vue')
         },
         {
-          path: '/search',
-          name: 'search-list',
-          component: () => import('./views/SearchList.vue')
+          path: '/search/:text',
+          name: 'search-result',
+          component: () => import('./views/SearchResult.vue')
         }
       ]
     },
