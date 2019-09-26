@@ -15,6 +15,16 @@ export async function getFeed(userID: string, feedID: number): Promise<Feed> {
   return res.rows[0] as Feed
 }
 
+export async function getShareFeeds(userID: string, feedID: number): Promise<Feed[]> {
+  const query = `
+    SELECT id, "originalPoster", "group"
+    FROM get_feeds_from_user($1) WHERE "shareFromFeed"->>'id' = $2::text
+  `
+  const params = [userID, feedID]
+  const res = await PB.query(query, params)
+  return res.rows
+}
+
 export async function postFeed(form: FeedForm, userID: string): Promise<number> {
   const query = `
     CALL public.create_feed($1, $2, $3, $4, $5, $6, $7, 0)

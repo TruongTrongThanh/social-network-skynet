@@ -12,6 +12,7 @@
     <div class="reply-control rounded-bottom clearfix">
       <button
         class="btn btn-link btn-sm mx-2 my-1"
+        @click="toggle = false"
       >
         Cancel
       </button>
@@ -25,6 +26,7 @@
   </div>
   <div
     v-else
+    class="text-muted clickable"
     @click="toggle = !toggle"
   >
     Trả lời...

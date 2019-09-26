@@ -1,5 +1,5 @@
 <template>
-  <div class="comment-group">
+  <div class="comment-group p-2 rounded">
     <comment-comp
       :comment="comment"
       class="mb-2"
@@ -9,16 +9,18 @@
       v-show="expandToggle"
       class="reply-section"
     >
-      <comment-comp
-        v-for="reply in comment.replies"
-        :key="reply.id"
-        :comment="reply"
-        :is-not-reply="false"
-        class="ml-5 mb-2"
-      />
+      <transition-group name="comment-list" tag="div" class="replies-wrapper pl-5">
+        <comment-comp
+          v-for="reply in comment.replies"
+          :key="reply.id"
+          :comment="reply"
+          :is-not-reply="false"
+          class="px-2 py-1 rounded"
+        />
+      </transition-group>
       <reply-input
         :comment-id="comment.id"
-        class="ml-5"
+        class="ml-5 mt-2"
         @posted="replyListUpdate"
       />
     </div>

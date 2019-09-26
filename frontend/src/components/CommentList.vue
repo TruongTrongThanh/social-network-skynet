@@ -3,15 +3,13 @@
     v-if="this.commentList && this.commentList.length > 0"
     class="comment-list px-3 pb-2"
   >
-    <div
-      v-for="cm in commentList"
-      :key="cm.id"
-      class="mb-4"
-    >
+    <transition-group name="comment-list" tag="div">
       <comment-group
+        v-for="(cm) in commentList"
+        :key="cm.id"
         :data="cm"
       />
-    </div>
+    </transition-group>
   </div>
   <div v-else class="no-comment my-4">There is no comment(s) :(</div>
 </template>
@@ -35,9 +33,21 @@ export default class CommentList extends Vue {
 }
 </script>
 
-<style scoped lang="scss">
-  .no-comment {
-    color: gray;
-    text-align: center;
+<style lang="scss">
+.comment-list {
+  .comment-list-enter {
+    background-color: orange;
   }
+  .comment-list-enter-active {
+    transition: background-color 5s ease;
+  }
+  .comment-list-enter-to {
+    background-color: none;
+  }
+}
+
+.no-comment {
+  color: gray;
+  text-align: center;
+}
 </style>

@@ -11,9 +11,14 @@
     </div>
     <div class="title row justify-content-between pt-2">
       <div class="col-4">
-        <div class="d-flex">
-          <img :src="feed.originalPoster.avatar || require('@/assets/empty-avatar.png')" class="rounded mr-2" width="40">
-          <span class="fullname">{{ feed.originalPoster.fullname }}</span>
+        <div class="d-flex align-items-center">
+          <img :src="feed.originalPoster.avatar || require('@/assets/empty-avatar.png')" class="avatar rounded mr-2">
+          <div>
+            <div class="fullname">{{ feed.originalPoster.fullname }}</div>
+            <div class="tag-list">
+              <span v-for="t in feed.tags" :key="t" class="badge badge-pill badge-info mr-1" v-text="t"/>
+            </div>
+          </div>
         </div>
       </div>
       <div class="col-2 text-right">
@@ -33,7 +38,7 @@
     <div v-if="!feed.image && feed.shareFromFeed" class="row">
       <div class="col">
         <feed-comp
-          :init="feed.shareFromFeed"
+          :data="feed.shareFromFeed"
           :is-scale-down="isScaleDown"
           :is-inner-shared-feed="true"
           class="share-feed px-3 mb-2"
@@ -41,7 +46,7 @@
       </div>
     </div>
     <div 
-      v-if="feed.upvote && feed.downvote && feed.share"
+      v-if="!isInnerSharedFeed"
       class="footer row rounded-bottom justify-content-center align-items-center"
     >
       <div class="col-5">
@@ -107,13 +112,13 @@ import User from '@/models/user'
   }
 })
 export default class FeedComp extends Mixins(CalcTimeMixin) {
-  @Prop({ type: Object, required: true }) readonly init!: Feed
+  @Prop({ type: Object, required: true }) readonly data!: Feed
   @Prop({ type: Boolean, default: false }) readonly isScaleDown!: boolean
   @Prop({ type: Boolean, default: false }) readonly isInnerSharedFeed!: boolean
 
   @State readonly authUser!: User
 
-  feed: Feed = this.init
+  feed: Feed = this.data
   HasOtherListener: boolean = false
 
   get upvoteRatio(): number {
@@ -124,6 +129,15 @@ export default class FeedComp extends Mixins(CalcTimeMixin) {
   get downvoteRatio(): number {
     if (+this.feed.upvote === 0 && +this.feed.downvote === 0) return 0
     return (this.feed.downvote / (+this.feed.upvote + +this.feed.downvote)) * 100
+  }
+
+  get calcTime(): string {
+    return this.getCalcTime(new Date(this.feed.createdAt))
+  }
+
+  async vote(val: boolean) {
+    this.feed.voteState = this.feed.voteState === val ? null : val
+    await voteFeed(this.feed.id, this.feed.voteState)
   }
 
   created() {
@@ -140,15 +154,6 @@ export default class FeedComp extends Mixins(CalcTimeMixin) {
     })
   }
 
-  get calcTime(): string {
-    return this.getCalcTime(new Date(this.feed.createdAt))
-  }
-
-  async vote(val: boolean) {
-    this.feed.voteState = this.feed.voteState === val ? null : val
-    await voteFeed(this.feed.id, this.feed.voteState)
-  }
-
   beforeDestroy() {
     if (!this.HasOtherListener) {
       socketIO.off(`feed-vote-update-${this.feed.id}`)
@@ -158,121 +163,125 @@ export default class FeedComp extends Mixins(CalcTimeMixin) {
 </script>
 
 <style scoped lang="scss">
-  .feed {
-    background-color: white;
+.feed {
+  background-color: white;
 
-    .group {
-      background-color: #f8f8f8;
+  .group {
+    background-color: #f8f8f8;
 
-      .group-avatar {
-        border-radius: 20px;
-      }
-      .group-name {
-        font-size: 0.9em;
-        color: gray;
-      }
+    .group-avatar {
+      border-radius: 20px;
     }
-
-    .title {
-      .time {
-        color: #848484;
-        font-size: 0.8em;
-      }
-      .fullname {
-        font-weight: bold;
-      }
-    }
-    .content {
-      padding: 10px 20px;
-      white-space: pre-line;
-    }
-
-    .feed-image {
-      width: 100%;
-      background-color: #696969;
-
-      &.scale-down {
-        height: 500px;
-        object-fit: scale-down;
-      }
-    }
-
-    .share-feed {
-      border: 2px dashed gray;
-    }
-
-    .footer {
-      height: 2.2rem;
-      text-align: center;
+    .group-name {
+      font-size: 0.9em;
       color: gray;
-      background-color: #f8f8f8;
-
-      .ratio-bar {
-        width: 80%;
-        margin: 0 auto;
-        height: 5px;
-
-        .ratio-bar-upvote,
-        .ratio-bar-downvote,
-        .ratio-bar-novote {
-          top: 0;
-          height: 100%;
-        }
-
-        .ratio-bar-upvote {
-          left: 0;
-          background-color: $themeColor;
-        }
-
-        .ratio-bar-downvote {
-          right: 0;
-          background-color: invert($themeColor);
-        }
-
-        .ratio-bar-novote {
-          width: 100%;
-          left: 0;
-          background-color: #afafaf;
-        }
-      }
     }
+  }
 
-    .upvote-color {
-      color: $themeColor;
+  .title {
+    .time {
+      color: #848484;
+      font-size: 0.8em;
     }
-    .downvote-color {
-      color: invert($themeColor);
+    .fullname {
+      font-weight: bold;
     }
+    .avatar {
+      width: 40px;
+      height: 40px;
+    }
+  }
+  .content {
+    padding: 10px 20px;
+    white-space: pre-line;
+  }
 
-    .icon {
-      position: relative;
-      width: 15px;
-      height: 15px;
-      top: -2px;
-      fill: #afafaf;
+  .feed-image {
+    width: 100%;
+    background-color: #696969;
 
-      &.rotate-180 {
-        transform: rotate(180deg);
-      }
+    &.scale-down {
+      height: 500px;
+      object-fit: scale-down;
+    }
+  }
 
-      &.arrow {
-        &.upvote {
-          fill: $themeColor;
-        }
-        &.downvote {
-          fill: invert($themeColor);
-        }
-      }
+  .share-feed {
+    border: 2px dashed gray;
+  }
 
-      &.comment {
+  .footer {
+    height: 2.2rem;
+    text-align: center;
+    color: gray;
+    background-color: #f8f8f8;
+
+    .ratio-bar {
+      width: 80%;
+      margin: 0 auto;
+      height: 5px;
+
+      .ratio-bar-upvote,
+      .ratio-bar-downvote,
+      .ratio-bar-novote {
         top: 0;
-        width: 17px;
-        height: 17px;
+        height: 100%;
       }
-      &.share {
-        width: 17px;
-        height: 17px;
+
+      .ratio-bar-upvote {
+        left: 0;
+        background-color: $themeColor;
+      }
+
+      .ratio-bar-downvote {
+        right: 0;
+        background-color: invert($themeColor);
+      }
+
+      .ratio-bar-novote {
+        width: 100%;
+        left: 0;
+        background-color: #afafaf;
       }
     }
   }
+
+  .upvote-color {
+    color: $themeColor;
+  }
+  .downvote-color {
+    color: invert($themeColor);
+  }
+
+  .icon {
+    position: relative;
+    width: 15px;
+    height: 15px;
+    top: -2px;
+    fill: #afafaf;
+
+    &.rotate-180 {
+      transform: rotate(180deg);
+    }
+
+    &.arrow {
+      &.upvote {
+        fill: $themeColor;
+      }
+      &.downvote {
+        fill: invert($themeColor);
+      }
+    }
+
+    &.comment {
+      top: 0;
+      width: 17px;
+      height: 17px;
+    }
+    &.share {
+      width: 17px;
+      height: 17px;
+    }
+  }
+}
 </style>

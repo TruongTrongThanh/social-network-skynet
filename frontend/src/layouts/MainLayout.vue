@@ -1,6 +1,6 @@
 <template>
   <div class="main-layout">
-    <router-view class="top-offset"/>
+    <router-view :key="$route.fullPath" class="top-offset"/>
     <navbar v-if="authUser" :auth-user="authUser"/>
     <div
       v-if="sidebarDisplay"

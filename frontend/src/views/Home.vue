@@ -1,19 +1,21 @@
 <template>
   <div class="home container-fluid">
     <div class="row align-items-start justify-content-center">
-      <div class="feed-list col-md-6 mr-5">
-        <feed-input class="mb-3"/>
-        <feed-comp
-          v-for="feed in feeds"
-          :key="feed.id"
-          :init="feed"
-          :is-scale-down="true"
-          class="px-3 mb-3 clickable raise-border"
-          @click="getFeed(feed.id)"
-          @share-click="clickedShareFeed = feed"
-        />
+      <div class="feed-list col-6 mr-5">
+        <feed-input class="mb-3" @posted="updateFeedList"/>
+        <transition-group v-if="feeds.length > 0" name="feed-list" tag="div">
+          <feed-comp
+            v-for="feed in feeds"
+            :key="feed.id"
+            :data="feed"
+            :is-scale-down="true"
+            class="px-3 mb-3 clickable raise-border"
+            @click="getFeed(feed.id)"
+            @share-click="clickedShareFeed = feed"
+          />
+        </transition-group>
       </div>
-      <div class="trending sticky-top col-md-3">
+      <div class="trending sticky-top col-3">
         <popular-lang class="mb-3"/>
         <famous class="mb-2"/>
         <div class="copyright text-muted">&copy; {{ new Date().getFullYear() }} Skynet, Open University. All rights reserved</div>
@@ -67,11 +69,16 @@ export default class Home extends Vue {
   clickedShareFeed: Feed | null = null
 
   async created() {
-    this.feeds = await getHomeFeeds()
+    const res = await getHomeFeeds()
+    Vue.set(this, 'feeds', res)
   }
 
   async getFeed(id: number) {
     this.clickedFeed = await getFeedDetail(id)
+  }
+
+  updateFeedList(f: Feed) {
+    this.feeds.unshift(f)
   }
 }
 </script>
@@ -120,6 +127,16 @@ $feed-width: 800px;
 
   .raise-border:hover {
     border: 1px solid #979797;
+  }
+
+  .feed-list-enter {
+    background-color: orange;
+  }
+  .feed-list-enter-active {
+    transition: background-color 5s ease;
+  }
+  .feed-list-enter-to {
+    background-color: none;
   }
 }
 </style>

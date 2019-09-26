@@ -7,7 +7,7 @@
         <div v-else class="name">{{ entity.name }}</div>
         <div v-if="type === 'user'" class="position text-muted font-italic">{{ entity.position }}</div>
         <div v-else>
-          <span v-for="tag in entity.tags" :key="tag" class="tag mr-2 px-2 rounded">{{ tag }}</span>
+          <span v-for="tag in entity.tags" :key="tag" class="badge badge-pill badge-success mr-2">{{ tag }}</span>
         </div>
       </div>
     </div>

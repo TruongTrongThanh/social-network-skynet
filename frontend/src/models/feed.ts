@@ -12,6 +12,7 @@ export interface Feed {
   share: number
   createdAt: string
   commentList: FeedComment[]
+  tags: string[]
   group?: Group
   image?: string
   shareFromFeed?: Feed

@@ -75,6 +75,7 @@ import TagsInput from '@/components/TagsInput.vue'
 import ImageInput from '@/components/FeedImageInput.vue'
 import { FeedForm, Feed } from '@/models/feed'
 import { getTagsFromGroup } from '@/apis/group'
+import User from '@/models/user'
 
 @Component({
   components: {
@@ -86,6 +87,7 @@ export default class FeedInput extends Vue {
   @Prop({ type: Object }) readonly sharedFeed!: Feed
 
   @State followingGroups!: Group[]
+  @State authUser!: User
 
   form: FeedForm = {
     content: '',
@@ -97,13 +99,40 @@ export default class FeedInput extends Vue {
 
   @Watch('form.groupID')
   async onFormGroupIDChanged(newVal: number, oldVal: number) {
+    if (newVal === 0) return
     const tags = await getTagsFromGroup(newVal)
     Vue.set(this.form, 'tags', tags)
   }
 
   async post() {
     const res = await postFeed(this.form)
-    console.log(res)
+    const feedEntity: Feed = {
+      id: res,
+      originalPoster: this.authUser,
+      content: this.form.content,
+      group: this.followingGroups.find(g => g.id === this.form.groupID),
+      voteState: null,
+      upvote: 0,
+      downvote: 0,
+      share: 0,
+      comment: 0,
+      createdAt: new Date().toString(),
+      commentList: [],
+      tags: this.form.tags
+    }
+    this.resetForm()
+    this.$emit('posted', feedEntity)
+  }
+
+  resetForm() {
+    const reset = {
+      content: '',
+      image: '',
+      groupID: 0,
+      tags: [],
+      shareFromFeedID: this.sharedFeed ? this.sharedFeed.id : undefined
+    }
+    Vue.set(this, 'form', reset)
   }
 }
 </script>

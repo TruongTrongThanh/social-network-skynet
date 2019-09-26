@@ -13,8 +13,8 @@
       :route="{ name: 'group-create' }"
       class="pl-3 py-2"
     >
-      <div class="notif d-flex align-items-center ml-2">
-        <div class="number flex-fill text-center">2</div>
+      <div class="badge badge-pill badge-danger ml-2">
+        2
       </div>
     </bullet>
     <div v-if="adminGroups.length > 0" class="admin-groups">
@@ -73,14 +73,5 @@ export default class Sidebar extends Vue {
   height: 100vh;
   background-color: white;
   position: fixed;
-
-  .notif {
-    background-color: red;
-    width: 30px;
-    height: 30px;
-    border-radius: 50%;
-    color: white;
-    font-size: 13px;
-  }
 }
 </style>

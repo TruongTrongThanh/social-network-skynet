@@ -23,6 +23,8 @@ import { Feed, FeedComment } from '@/models/feed'
 import { getFeedDetail } from '@/apis/feed'
 import FeedWrapper from '@/components/FeedWrapper.vue'
 import FeedInput from '@/components/FeedInput.vue'
+import { Route } from 'vue-router'
+import { NextFunction } from '../models/vue-api'
 
 @Component({
   components: {
@@ -34,8 +36,12 @@ export default class FeedDetails extends Vue {
   feed: Feed | null = null
   clickedShareFeed: Feed | null = null
 
-  async created() {
+  async init() {
     this.feed = await getFeedDetail(this.$route.params.id as any)
+  }
+
+  created() {
+    this.init()
   }
 
   updateCommentList(cmt: FeedComment) {

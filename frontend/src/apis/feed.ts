@@ -11,6 +11,12 @@ export async function getHomeFeeds(): Promise<Feed[]> {
   return res.data
 }
 
+export async function getShareFeeds(feedID: number): Promise<Feed[]> {
+  const url = API_URL + `/share-feeds?id=${feedID}`
+  const res = await axios.get(url)
+  return res.data
+}
+
 export async function getFeedDetail(feedID: number): Promise<Feed> {
   const url = API_URL + `/feed?id=${feedID}`
   const res = await axios.get(url)
