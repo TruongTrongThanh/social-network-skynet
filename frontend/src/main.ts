@@ -16,6 +16,8 @@ Vue.config.errorHandler = (err, vm, info) => {
 
 router.beforeEach((to, from, next) => {
   store.commit('setSidebarDisplay', false)
+  store.commit('setClickedFeed', null)
+  store.commit('setClickedShareFeed', null)
   next()
 })
 

@@ -30,4 +30,30 @@ export async function getTagsFromGroup(groupID: number): Promise<string[]> {
   return res.rows[0].tags
 }
 
-// export async function getGroupDetails(groupID: number)
+export async function getGroupDetails(groupID: number): Promise<Group> {
+  const query = `
+    SELECT * FROM get_group($1)
+  `
+  const params = [groupID]
+  const res = await PB.query(query, params)
+  return res.rows[0]
+}
+
+export async function joinGroup(userID: string, groupID: number) {
+  const query = `
+    INSERT INTO public."Group_User"(
+      group_id, user_id, role)
+    VALUES ($1, $2, 'member');
+  `
+  const params = [groupID, userID]
+  await PB.query(query, params)
+}
+
+export async function leaveGroup(userID: string, groupID: number) {
+  const query = `
+    DELETE FROM public."Group_User"
+    WHERE group_id = $1 AND user_id = $2;
+  `
+  const params = [groupID, userID]
+  await PB.query(query, params)
+}

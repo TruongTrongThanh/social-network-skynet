@@ -1,6 +1,6 @@
 <template>
   <div class="feed-wrapper rounded pb-2">
-    <feed-comp :data="feed" @share-click="$emit('share-click')"/>
+    <feed-comp :data="feed"/>
     <comment-input
       class="mt-3"
       @posted="updateCommentList"

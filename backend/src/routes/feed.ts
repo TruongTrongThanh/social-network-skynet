@@ -1,5 +1,5 @@
 import * as Router from 'koa-router'
-import { getHomeFeeds, getFeed, postFeed, vote, getVote, postComment, postReply, getShareFeeds } from '../services/feed'
+import { getHomeFeeds, getFeed, postFeed, vote, getVote, postComment, postReply, getShareFeeds, getGroupFeeds } from '../services/feed'
 import {  FeedVote, FeedForm } from '../models/feed'
 import { getSocketIO } from '../socket'
 import { upload } from '../services/storage'
@@ -19,6 +19,13 @@ router.get('/share-feeds', async ctx => {
   ctx.assert(ctx.state.userID, 401)
   ctx.assert(ctx.query.id, 400)
   ctx.body = await getShareFeeds(ctx.state.userID, ctx.query.id)
+  ctx.status = 200
+})
+
+router.get('/group-feeds', async ctx => {
+  ctx.assert(ctx.state.userID, 401)
+  ctx.assert(ctx.query.id, 400)
+  ctx.body = await getGroupFeeds(ctx.state.userID, ctx.query.id)
   ctx.status = 200
 })
 

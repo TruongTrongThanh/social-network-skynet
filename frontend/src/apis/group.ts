@@ -21,3 +21,14 @@ export async function getTagsFromGroup(groupID: number): Promise<string[]> {
   const res = await axios.get(url)
   return res.data
 }
+
+export async function getGroupDetails(groupID: number): Promise<Group> {
+  const url = API_URL + `/group-details?id=${groupID}`
+  const res = await axios.get(url)
+  return res.data
+}
+
+export async function setGroupMemberStatus(groupID: number, status: 'join' | 'leave') {
+  const url = API_URL + '/group-member'
+  const res = await axios.post(url, { id: groupID, status })
+}

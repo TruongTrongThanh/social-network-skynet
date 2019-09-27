@@ -40,9 +40,9 @@
       </div>
       <div class="row align-items-center mt-2">
         <div class="col">
-          <div class="d-flex align-items-center">
+          <div class="group-choice d-flex align-items-center">
             <img :src="require('@/assets/icons/group-btn-icon.png')" width="40">
-            <select v-model="form.groupID" class="form-control form-control-sm ml-2">
+            <select :disabled="groupId !== 0" v-model="form.groupID" class="form-control form-control-sm ml-2">
               <option
                 v-for="g in followingGroups"
                 :key="g.id"
@@ -85,6 +85,7 @@ import User from '@/models/user'
 })
 export default class FeedInput extends Vue {
   @Prop({ type: Object }) readonly sharedFeed!: Feed
+  @Prop({ type: Number, default: 0 }) readonly groupId!: number
 
   @State followingGroups!: Group[]
   @State authUser!: User
@@ -92,7 +93,7 @@ export default class FeedInput extends Vue {
   form: FeedForm = {
     content: '',
     image: '',
-    groupID: 0,
+    groupID: this.groupId,
     tags: [],
     shareFromFeedID: this.sharedFeed ? this.sharedFeed.id : undefined
   }
@@ -128,7 +129,7 @@ export default class FeedInput extends Vue {
     const reset = {
       content: '',
       image: '',
-      groupID: 0,
+      groupID: this.groupId,
       tags: [],
       shareFromFeedID: this.sharedFeed ? this.sharedFeed.id : undefined
     }

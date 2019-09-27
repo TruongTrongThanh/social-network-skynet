@@ -1,4 +1,5 @@
 import { Tag } from './tag'
+import User from './user'
 
 export interface Group {
   id: number
@@ -9,6 +10,7 @@ export interface Group {
   tags?: Tag[]
   avatar?: string
   banner?: string
+  memberList: User[]
 }
 
 export interface GroupForm {

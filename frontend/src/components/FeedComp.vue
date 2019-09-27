@@ -1,6 +1,9 @@
 <template>
   <div class="feed rounded p-0" @click="$emit('click')">
-    <div class="group row rounded-top py-1">
+    <div
+      v-if="hasGroupInfo"
+      class="group row rounded-top py-1"
+    >
       <div class="col">
         <router-link :to="{ name: 'group-details', params: { id: feed.group.id } }">
           <span v-if="isInnerSharedFeed" class="group-name mr-2">Crosspost từ</span>
@@ -85,7 +88,7 @@
         {{ feed.comment }}
       </div>
       <div v-if="!feed.shareFromFeed" class="col-2">
-        <share class="icon share" @click.stop="$emit('share-click')"/>
+        <share class="icon share" @click.stop="setClickedShareFeed(feed)"/>
         {{ feed.share }}
       </div>
     </div>
@@ -101,7 +104,7 @@ import Share from '@/assets/icons/share.svg'
 import { Feed, FeedVoteNumber } from '@/models/feed'
 import { voteFeed } from '@/apis/feed'
 import socketIO from '@/apis/socket'
-import { State } from 'vuex-class'
+import { State, Mutation } from 'vuex-class'
 import User from '@/models/user'
 
 @Component({
@@ -115,8 +118,10 @@ export default class FeedComp extends Mixins(CalcTimeMixin) {
   @Prop({ type: Object, required: true }) readonly data!: Feed
   @Prop({ type: Boolean, default: false }) readonly isScaleDown!: boolean
   @Prop({ type: Boolean, default: false }) readonly isInnerSharedFeed!: boolean
+  @Prop({ type: Boolean, default: true }) readonly hasGroupInfo!: boolean
 
   @State readonly authUser!: User
+  @Mutation setClickedShareFeed!: (val: Feed) => void
 
   feed: Feed = this.data
   HasOtherListener: boolean = false

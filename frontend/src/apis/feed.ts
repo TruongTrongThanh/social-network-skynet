@@ -17,6 +17,12 @@ export async function getShareFeeds(feedID: number): Promise<Feed[]> {
   return res.data
 }
 
+export async function getGroupFeeds(groupID: number): Promise<Feed[]> {
+  const url = API_URL + `/group-feeds?id=${groupID}`
+  const res = await axios.get(url)
+  return res.data
+}
+
 export async function getFeedDetail(feedID: number): Promise<Feed> {
   const url = API_URL + `/feed?id=${feedID}`
   const res = await axios.get(url)

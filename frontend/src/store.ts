@@ -1,7 +1,9 @@
 import Vue from 'vue'
-import Vuex from 'vuex'
+import Vuex, { StoreOptions } from 'vuex'
 import User from '@/models/user'
-import { Group } from './models/group'
+import { Group } from '@/models/group'
+import { Feed } from '@/models/feed'
+import { getFeedDetail } from './apis/feed'
 
 Vue.use(Vuex)
 
@@ -9,13 +11,17 @@ export interface RootState {
   sidebarDisplay: boolean
   authUser: User | null
   followingGroups: Group[]
+  clickedFeed: Feed | null
+  clickedShareFeed: Feed | null
 }
 
 export default new Vuex.Store<RootState>({
   state: {
     sidebarDisplay: false,
     authUser: null,
-    followingGroups: []
+    followingGroups: [],
+    clickedFeed: null,
+    clickedShareFeed: null
   },
 
   getters: {
@@ -24,6 +30,12 @@ export default new Vuex.Store<RootState>({
     },
     adminGroups(state): Group[] {
       return state.followingGroups.filter(g => g.role === 'admin')
+    },
+    hasjoinedGroup: state => (id: number) => {
+      return state.followingGroups.findIndex(g => g.id === id) !== -1
+    },
+    isAdminOfGroup: (state, getters) => (id: number) => {
+      return getters.adminGroups.findIndex((g: Group) => g.id === id) !== -1
     }
   },
 
@@ -39,6 +51,32 @@ export default new Vuex.Store<RootState>({
     },
     setFollowingGroups(state, val: Group[]) {
       state.followingGroups = val
+    },
+    addFollowingGroup(state, val: Group) {
+      state.followingGroups.push({
+        id: val.id,
+        avatar: val.avatar,
+        name: val.name,
+        role: 'member',
+        tags: [],
+        memberList: []
+      })
+    },
+    removeFollowingGroup(state, groupID: number) {
+      const index = state.followingGroups.findIndex(g => g.id === groupID)
+      state.followingGroups.splice(index, 1)
+    },
+    setClickedFeed(state, val: Feed) {
+      state.clickedFeed = val
+    },
+    setClickedShareFeed(state, val: Feed) {
+      state.clickedShareFeed = val
+    }
+  },
+
+  actions: {
+    async setClickedFeedByID(state, id: number) {
+      state.commit('setClickedFeed', await getFeedDetail(id))
     }
   }
 })

@@ -32,7 +32,7 @@
         <div class="form-group">
           <label for="tags-input">Gắn tag cho cộng đồng</label>
           <tags-input
-            @tags-changed="(tags) => form.tags = tags"
+            :data.sync="form.tags"
           />
         </div>
         <div class="form-group">

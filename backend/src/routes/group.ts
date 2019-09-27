@@ -2,7 +2,7 @@ import * as Router from 'koa-router'
 import { GroupBase64Form, GroupURLForm } from '../models/group'
 import { upload } from '../services/storage'
 import * as shortID from 'short-uuid'
-import { createGroup, getGroupsFromUserID, getTagsFromGroup } from '../services/group'
+import { createGroup, getGroupsFromUserID, getTagsFromGroup, getGroupDetails, joinGroup, leaveGroup } from '../services/group'
 
 const router = new Router()
 
@@ -36,10 +36,28 @@ router.get('/group', async ctx => {
   }
 })
 
+router.get('/group-details', async ctx => {
+  ctx.assert(ctx.state.userID, 401)
+  ctx.body = await getGroupDetails(ctx.query.id)
+  ctx.status = 200
+})
+
 router.get('/group/tags', async ctx => {
   ctx.assert(ctx.state.userID, 401)
   ctx.body = await getTagsFromGroup(ctx.query.id)
   ctx.status = 200
 })
+
+router.post('/group-member', async ctx => {
+  ctx.assert(ctx.state.userID, 401)
+  ctx.assert(ctx.request.body.id, 400)
+  ctx.assert(ctx.request.body.status, 400)
+  const status: 'join' | 'leave' = ctx.request.body.status
+  if (status === 'join') await joinGroup(ctx.state.userID, ctx.request.body.id)
+  else if (status === 'leave') await leaveGroup(ctx.state.userID, ctx.request.body.id)
+  else ctx.throw('status is invalid', 400)
+  ctx.status = 200
+})
+
 
 export default router.routes()

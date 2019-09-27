@@ -9,6 +9,7 @@ export interface Group {
   tags: string[]
   avatar?: string
   banner?: string
+  memberList: User[]
 }
 
 export interface GroupForm {
