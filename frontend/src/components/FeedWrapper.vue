@@ -2,6 +2,7 @@
   <div class="feed-wrapper rounded pb-2">
     <feed-comp :data="feed"/>
     <comment-input
+      :feed-id="feed.id"
       class="mt-3"
       @posted="updateCommentList"
     />

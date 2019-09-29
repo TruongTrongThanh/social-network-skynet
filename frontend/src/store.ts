@@ -36,6 +36,9 @@ export default new Vuex.Store<RootState>({
     },
     isAdminOfGroup: (state, getters) => (id: number) => {
       return getters.adminGroups.findIndex((g: Group) => g.id === id) !== -1
+    },
+    hasLoggedIn(state): boolean {
+      return state.authUser !== null
     }
   },
 

@@ -125,9 +125,9 @@ import GroupAbout from '@/components/GroupAbout.vue'
 import GroupMembers from '@/components/GroupMembers.vue'
 import { getGroupDetails, setGroupMemberStatus } from '@/apis/group'
 import { Getter, Mutation, State } from 'vuex-class'
-import User from '../models/user'
+import User from '@/models/user'
 import { Route } from 'vue-router'
-import { NextFunction } from '../models/vue-api'
+import { NextFunction } from '@/models/vue-api'
 
 Component.registerHooks([
   'beforeRouteEnter'
@@ -239,16 +239,6 @@ $avatar-memberlist-size: 51px;
 
   .title {
     color: #5ca073;
-  }
-
-  .feed-list-enter {
-    background-color: orange;
-  }
-  .feed-list-enter-active {
-    transition: background-color 5s ease;
-  }
-  .feed-list-enter-to {
-    background-color: none;
   }
 }
 </style>

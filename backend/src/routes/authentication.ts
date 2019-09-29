@@ -1,41 +1,45 @@
 
 import * as Router from 'koa-router'
 import * as Auth from '../services/authentication'
-import User from '../models/user'
+import Cookies = require('cookies')
+import { generateRefreshToken } from '../services/user'
 
 const router = new Router()
 
 router.post('/register', async ctx => {
-  try {
-    await Auth.register(ctx.request.body.username, ctx.request.body.fullname, ctx.request.body.password)
-    ctx.status = 200
-  } catch (err) {
-    console.log(err)
-    ctx.status = 500
-  }
+  await Auth.register(ctx.request.body)
+  ctx.status = 200
 })
 
 router.post('/login', async ctx => {
-  try {
-    const accessToken = await Auth.login(ctx.request.body.username, ctx.request.body.password)
-    ctx.cookies.set('access_token', accessToken, {
-      httpOnly: true
-    })
-    ctx.status = 200
-  } catch (err) {
-    console.log(err)
-    ctx.status = 400
+  const token = await Auth.login(ctx.request.body)
+  ctx.assert(token, 400)
+  const options: Cookies.SetOption = {
+    httpOnly: true
   }
+  ctx.cookies.set('access_token', token.accessToken, options)
+  if (Boolean(ctx.request.body.rememberMe)) {
+    ctx.cookies.set('refresh_token', token.refreshToken, options)
+  }
+  ctx.status = 200
 })
 
-router.post('/get-user', async ctx => {
-  try {
-    const jwtoken = ctx.cookies.get('access_token')
-    const identity = await Auth.getUserFromJWT(jwtoken)
-    ctx.body = identity
-  } catch (err) {
-    ctx.status = 403
+router.post('/logout', async ctx => {
+  ctx.assert(ctx.state.user, 400)
+  await generateRefreshToken(ctx.state.user.id)
+
+  const options: Cookies.SetOption = {
+    expires: new Date()
   }
- })
+  ctx.cookies.set('access_token', '', options)
+  ctx.cookies.set('refresh_token', '', options)
+
+  ctx.status = 200
+})
+
+router.get('/has-logged-in', async ctx => {
+  ctx.assert(ctx.state.user, 401)
+  ctx.status = 200
+})
 
 export default router.routes()

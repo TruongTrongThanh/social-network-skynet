@@ -18,10 +18,15 @@
           {{ authUser.fullname }}
         </button>
         <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuOffset">
-          <a class="dropdown-item" href="#">Nhà của tôi</a>
+          <router-link
+            :to="{ name: 'user-details', params: { id: authUser.id } }"
+            class="dropdown-item"
+          >
+            Nhà của tôi
+          </router-link>
           <a class="dropdown-item" href="#">Tùy chỉnh trang cá nhân</a>
           <div class="dropdown-divider"></div>
-          <a class="dropdown-item" href="#">Đăng xuất</a>
+          <a class="dropdown-item" href="#" @click="out">Đăng xuất</a>
         </div>
       </div>
     </div>
@@ -33,6 +38,7 @@ import { Vue, Component, Prop } from 'vue-property-decorator'
 import BrandToggler from '@/components/BrandToggler.vue'
 import User from '@/models/user'
 import SearchBar from '@/components/SearchBar.vue'
+import { logout } from '@/apis/authentication'
 
 @Component({
   components: {
@@ -42,6 +48,11 @@ import SearchBar from '@/components/SearchBar.vue'
 })
 export default class Navbar extends Vue {
   @Prop({type: Object, required: true}) authUser!: User
+
+  async out() {
+    await logout()
+    this.$router.push('/entry')
+  }
 }
 </script>
 

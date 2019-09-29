@@ -10,4 +10,7 @@ export default interface User {
   groups?: Group[]
   createdAt?: Date
   modifiedAt?: Date
+  refresh_token?: string
+  feedCount?: number
+  cmtCount?: number
 }

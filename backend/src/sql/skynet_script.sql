@@ -310,6 +310,29 @@ $$;
 ALTER FUNCTION public.get_group(group_id_input integer) OWNER TO postgres;
 
 --
+-- Name: get_user_details(character varying); Type: FUNCTION; Schema: public; Owner: postgres
+--
+
+CREATE FUNCTION public.get_user_details(user_id_input character varying) RETURNS TABLE(id character varying, avatar character varying, fullname character varying, "createdAt" date, "feedCount" bigint, "cmtCount" bigint)
+    LANGUAGE sql
+    AS $$
+	SELECT 
+		id, avatar, fullname, created_at AS "createdAt",
+		(SELECT count("Feed".id) FROM "Feed" WHERE original_poster_id = "User".id)
+		AS "feedCount",
+		(
+			SELECT
+			(SELECT count("Comment".id) FROM "Comment" WHERE "Comment".user_id = "User".id) +
+			(SELECT count("Comment".id) FROM "Comment" WHERE "Comment".user_id = "User".id)
+		) AS "cmtCount"
+	FROM "User"
+	WHERE "User".id = user_id_input
+$$;
+
+
+ALTER FUNCTION public.get_user_details(user_id_input character varying) OWNER TO postgres;
+
+--
 -- Name: searching(character varying); Type: FUNCTION; Schema: public; Owner: postgres
 --
 
@@ -622,7 +645,8 @@ CREATE TABLE public."User" (
     created_at date NOT NULL,
     modified_at date NOT NULL,
     "position" character varying(50),
-    ts_tokens tsvector
+    ts_tokens tsvector,
+    refresh_token character varying
 );
 
 
@@ -668,6 +692,8 @@ COPY public."Comment" (id, feed_id, content, user_id, created_at) FROM stdin;
 26	4	test 1	thanh22@gmail.com	2019-09-26 16:44:40.48
 27	4	test 1	thanh22@gmail.com	2019-09-26 16:47:36.716
 28	4	test asdga	thanh22@gmail.com	2019-09-26 16:47:51.937
+31	5	test	thanh21@gmail.com	2019-09-29 17:15:00.565
+32	5	test 2	thanh21@gmail.com	2019-09-29 17:15:06.219
 \.
 
 
@@ -737,9 +763,9 @@ COPY public."Group" (id, avatar, banner, intro, name, description, ts_tokens) FR
 
 COPY public."Group_User" (group_id, user_id, role) FROM stdin;
 46	thanh21@gmail.com	admin
-47	thanh21@gmail.com	admin
 46	thanh22@gmail.com	member
 47	thanh22@gmail.com	member
+47	thanh21@gmail.com	member
 \.
 
 
@@ -793,9 +819,12 @@ java	{47}	{4,8,10,11,14,17,19,20}
 -- Data for Name: User; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-COPY public."User" (id, fullname, password, avatar, created_at, modified_at, "position", ts_tokens) FROM stdin;
-thanh22@gmail.com	Võ Hồng Gay	$2b$10$csTROne/ciw8AxK2EnwRH.ckP6c1pHRte.YW.tCsizxFEAbl/euXO	\N	2019-09-24	2019-09-24	Java Developer	'develop':5 'gay':3 'hồng':2 'java':4 'võ':1
-thanh21@gmail.com	Trương Trọng Thanh	$2b$10$SE9xLi1Dfn7cDsxqRCHKYO8bGMYe0YF3NCW1OfokS9qGv4pJOcYoS	\N	2019-09-08	2019-09-08	Intern Developer	'develop':5 'intern':4 'thanh':3 'trương':1 'trọng':2
+COPY public."User" (id, fullname, password, avatar, created_at, modified_at, "position", ts_tokens, refresh_token) FROM stdin;
+thanh22@gmail.com	Võ Hồng Gay	$2b$10$csTROne/ciw8AxK2EnwRH.ckP6c1pHRte.YW.tCsizxFEAbl/euXO	\N	2019-09-24	2019-09-24	Java Developer	'develop':5 'gay':3 'hồng':2 'java':4 'võ':1	\N
+thanh21@gmail.com	Trương Trọng Thanh	$2b$10$SE9xLi1Dfn7cDsxqRCHKYO8bGMYe0YF3NCW1OfokS9qGv4pJOcYoS	\N	2019-09-08	2019-09-08	Intern Developer	'develop':5 'intern':4 'thanh':3 'trương':1 'trọng':2	\N
+thanh24@gmail.com	Hồ Quý Ly	$2b$10$xUiwGgjPnkUDBZb.wnt.oukedfTE9vPvmk.Ryft6.15WbFRSO5awa	\N	2019-09-29	2019-09-29	\N	\N	\N
+thanh25@gmail.com	Lý Công Công	$2b$10$b6YysiyaOZ9jXaGn8NqiTu6ZnDkkW6VKJBC5kU5Ay1sP6zETtkFC2	\N	2019-09-29	2019-09-29	\N	\N	205d312a332a24cf577d17e59b3a85b24530d7d98e89ef80bc93cbfe8801b2c3
+thanh23@gmail.com	Trương Hoàng Lý	$2b$10$xVpYECqLYRLyASTNnLr30u1nMgQdI/dpk04gbn2HDl.Xb9NJXgvK2	\N	2019-09-29	2019-09-29	\N	\N	eee6d7a2344cefe86d551056a41da7ee30ad8c44d4059dafdfa5c1b93c898d52
 \.
 
 
@@ -803,7 +832,7 @@ thanh21@gmail.com	Trương Trọng Thanh	$2b$10$SE9xLi1Dfn7cDsxqRCHKYO8bGMYe0YF3
 -- Name: Comment_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public."Comment_id_seq"', 28, true);
+SELECT pg_catalog.setval('public."Comment_id_seq"', 32, true);
 
 
 --

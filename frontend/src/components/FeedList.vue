@@ -1,12 +1,12 @@
 <template>
   <div class="feed-list">
-    <div v-if="!hasFeedInput || (groupId !== 0 && !hasJoined)"
+    <div v-if="(groupId !== 0 && !hasJoined)"
       class="alert alert-danger"
     >
       Bạn cần tham gia cộng đồng để có thể đăng bài viết!
     </div>
     <feed-input
-      v-else
+      v-else-if="hasFeedInput"
       :group-id="groupId"
       class="mb-3"
       @posted="updateFeedList"

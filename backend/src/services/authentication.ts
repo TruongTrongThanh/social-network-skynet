@@ -1,66 +1,60 @@
 import PB from '../database'
 import * as bcrypt from 'bcrypt'
+import * as crypto from 'crypto'
 import * as jwt from 'jsonwebtoken'
-import User from '../models/user'
+import { LoginForm, RegisterForm, JwtPayload, Token } from '../models/authentication'
+import { getUserGroupRoles, generateRefreshToken } from './user'
 
 const saltRounds = 10
 const JWT_KEY = process.env.JWT_KEY
 
-export interface JwtPayload {
-  id: string
-}
-
-export async function register(username: string, fullname: string, password: string) {
-  const hashedPass = bcrypt.hash(password, saltRounds)
+export async function register(form: RegisterForm) {
+  const hashedPass = bcrypt.hash(form.password, saltRounds)
   const query = `
     INSERT INTO public."User" (id, fullname, password, created_at, modified_at)
     VALUES ($1, $2, $3, $4, $4);
   `
-  const params = [username, fullname, await hashedPass, new Date()]
+  const params = [form.username, form.fullname, await hashedPass, new Date()]
   await PB.query(query, params)
 }
 
-export async function login(username: string, password: string): Promise<string> {
+export async function login(form: LoginForm): Promise<Token> {
   const query = `
     SELECT password
     FROM public."User"
     WHERE id = $1;
   `
-  const params = [username]
+  const params = [form.username]
   const res = await PB.query(query, params)
 
   if (res.rows[0] && res.rows[0].password) {
-    const isEqual = await bcrypt.compare(password, res.rows[0].password)
+    const isEqual = await bcrypt.compare(form.password, res.rows[0].password)
     if (isEqual) {
-      return jwt.sign({ id: username }, process.env.JWT_KEY)
+      let refreshToken: string
+      if (form.rememberMe) {
+        refreshToken = await generateRefreshToken(form.username)
+      }
+      const groupRoles = getUserGroupRoles(form.username)
+      const accessToken = this.signNewJWT({ id: form.username, roles: await groupRoles })
+      return { accessToken, refreshToken }
     }
   }
   return null
 }
 
-export async function getUserFromJWT(jwtoken: string): Promise<User> {
-  const decoded: any = jwt.verify(jwtoken, JWT_KEY)
-  return await getUserFromID(decoded.id)
+export function signNewJWT(payload: JwtPayload): string {
+  return jwt.sign(payload, JWT_KEY, {
+    expiresIn: '1h'
+  })
 }
 
-export async function getUserFromID(userID: string): Promise<User> {
-  const query = `
-    SELECT id, fullname, avatar
-    FROM public."User"
-    WHERE id = $1
-  `
-  const params = [userID]
-  const res = await PB.query(query, params)
-  return res.rows[0] as User
-}
-
-export function getUserIDFromJWT(jwtoken?: string): Promise<string> {
+export function getIdentityFromJWT(jwtoken?: string): Promise<JwtPayload> {
   return new Promise((resolve, reject) => {
     if (!jwtoken) resolve(null)
     else {
       jwt.verify(jwtoken, JWT_KEY, (err, decoded) => {
         if (err) reject(err)
-        else resolve((decoded as any).id)
+        else resolve(decoded as JwtPayload)
       })
     }
   })

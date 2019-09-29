@@ -7,7 +7,7 @@ import { createGroup, getGroupsFromUserID, getTagsFromGroup, getGroupDetails, jo
 const router = new Router()
 
 router.post('/group', async ctx => {
-  ctx.assert(ctx.state.userID, 401)
+  ctx.assert(ctx.state.user, 401)
 
   const rawForm: GroupBase64Form = ctx.request.body
   const urlForm: GroupURLForm = rawForm
@@ -21,15 +21,15 @@ router.post('/group', async ctx => {
     urlForm.bannerURL = await upload(banner, `group/${shortID.generate()}.jpg`)
   }
 
-  ctx.body = await createGroup(urlForm, ctx.state.userID)
+  ctx.body = await createGroup(urlForm, ctx.state.user.id)
   ctx.status = 200
 })
 
 router.get('/group', async ctx => {
-  ctx.assert(ctx.state.userID, 401)
+  ctx.assert(ctx.state.user, 401)
   const type: string = ctx.query.type || 'all'
   if (type === 'follow') {
-    ctx.body = await getGroupsFromUserID(ctx.state.userID)
+    ctx.body = await getGroupsFromUserID(ctx.state.user.id)
     ctx.status = 200
   } else {
     ctx.status = 501
@@ -37,24 +37,24 @@ router.get('/group', async ctx => {
 })
 
 router.get('/group-details', async ctx => {
-  ctx.assert(ctx.state.userID, 401)
+  ctx.assert(ctx.state.user, 401)
   ctx.body = await getGroupDetails(ctx.query.id)
   ctx.status = 200
 })
 
 router.get('/group/tags', async ctx => {
-  ctx.assert(ctx.state.userID, 401)
+  ctx.assert(ctx.state.user, 401)
   ctx.body = await getTagsFromGroup(ctx.query.id)
   ctx.status = 200
 })
 
 router.post('/group-member', async ctx => {
-  ctx.assert(ctx.state.userID, 401)
+  ctx.assert(ctx.state.user, 401)
   ctx.assert(ctx.request.body.id, 400)
   ctx.assert(ctx.request.body.status, 400)
   const status: 'join' | 'leave' = ctx.request.body.status
-  if (status === 'join') await joinGroup(ctx.state.userID, ctx.request.body.id)
-  else if (status === 'leave') await leaveGroup(ctx.state.userID, ctx.request.body.id)
+  if (status === 'join') await joinGroup(ctx.state.user.id, ctx.request.body.id)
+  else if (status === 'leave') await leaveGroup(ctx.state.user.id, ctx.request.body.id)
   else ctx.throw('status is invalid', 400)
   ctx.status = 200
 })

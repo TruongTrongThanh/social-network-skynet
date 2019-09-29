@@ -9,6 +9,14 @@
 <script lang="ts">
 import { Vue, Component } from 'vue-property-decorator'
 import EntryForm from '@/components/EntryForm.vue'
+import { NextFunction } from '../models/vue-api'
+import { Route } from 'vue-router'
+import { Getter, Mutation } from 'vuex-class'
+import { hasLoggedIn } from '@/apis/authentication'
+
+Component.registerHooks([
+  'beforeRouteEnter'
+])
 
 @Component({
   components: {
@@ -16,8 +24,15 @@ import EntryForm from '@/components/EntryForm.vue'
   }
 })
 export default class Entry extends Vue {
+  @Getter readonly hasLoggedIn!: boolean
+
   mounted() {
     document.body.style.backgroundColor = 'gray'
+  }
+
+  async beforeRouteEnter(to: Route, from: Route, next: NextFunction) {
+    if (await hasLoggedIn()) next('/')
+    else next()
   }
 }
 </script>

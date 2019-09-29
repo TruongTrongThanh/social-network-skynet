@@ -5,11 +5,11 @@
       class="group row rounded-top py-1"
     >
       <div class="col">
-        <router-link :to="{ name: 'group-details', params: { id: feed.group.id } }">
+        <div @click.stop="moveToGroupPage(feed.group.id)" class="clickable">
           <span v-if="isInnerSharedFeed" class="group-name mr-2">Crosspost từ</span>
           <img :src="require('@/assets/empty-avatar.png')" class="group-avatar mr-2" width="30">
           <span class="group-name">{{ feed.group.name }}</span>
-        </router-link>
+        </div>
       </div>
     </div>
     <div class="title row justify-content-between pt-2">
@@ -143,6 +143,10 @@ export default class FeedComp extends Mixins(CalcTimeMixin) {
   async vote(val: boolean) {
     this.feed.voteState = this.feed.voteState === val ? null : val
     await voteFeed(this.feed.id, this.feed.voteState)
+  }
+
+  moveToGroupPage(id: number) {
+    this.$router.push({ name: 'group-details', params: { id: String(id) }})
   }
 
   created() {

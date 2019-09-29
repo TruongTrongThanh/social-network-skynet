@@ -2,26 +2,28 @@
   <div class="entry-form">
     <div class="switch-zone">
       <span 
-        @click="mode = 0"
-        :class="{ selected: mode === 0 }"
+        @click="selectedTab = 'login'"
+        :class="{ selected: selectedTab === 'login' }"
         class="switch-btn mr-3 clickable"
       >
         Đăng nhập
       </span>
       <span
-        @click="mode = 1"
-        :class="{ selected: mode === 1 }"
+        @click="selectedTab = 'register'"
+        :class="{ selected: selectedTab === 'register' }"
         class="switch-btn clickable"
       >
         Đăng ký
       </span>
     </div>
-    <login-form v-show="mode === 0"/>
-    <register-form v-show="mode === 1"/>
-    <forget-form v-show="mode === 2"/>
+    <component
+      :is="selectedComp"
+      :auto-fill-username.sync="autoFillUsername"
+      @reigstered="switchToLogin"
+    ></component>
     <div
       class="forgot-pass clickable"
-      @click="mode = 2"
+      @click="selectedTab = 'forget'"
     >
       Quên mật khẩu?
     </div>
@@ -30,19 +32,30 @@
 
 <script lang="ts">
 import { Vue, Component } from 'vue-property-decorator'
-import LoginForm from '@/components/LoginForm.vue'
-import RegisterForm from '@/components/RegisterForm.vue'
-import ForgetForm from '@/components/ForgetForm.vue'
+import LoginFormComp from '@/components/LoginFormComp.vue'
+import RegisterFormComp from '@/components/RegisterFormComp.vue'
+import ForgetFormComp from '@/components/ForgetFormComp.vue'
 
 @Component({
   components: {
-    LoginForm,
-    RegisterForm,
-    ForgetForm
+    LoginFormComp,
+    RegisterFormComp,
+    ForgetFormComp
   }
 })
 export default class EntryForm extends Vue {
-  mode: number = 0
+
+  selectedTab: string = 'login'
+  autoFillUsername: string = ''
+
+  get selectedComp(): string {
+    return this.selectedTab + '-form-comp'
+  }
+
+  switchToLogin(username: string) {
+    this.selectedTab = 'login'
+    this.autoFillUsername = username
+  }
 }
 </script>
 

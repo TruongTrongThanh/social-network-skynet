@@ -2,7 +2,6 @@ import axios from 'axios'
 import { Feed, FeedVoteNumber, FeedForm } from '@/models/feed'
 
 const API_URL = process.env.VUE_APP_SERVER_API
-
 axios.defaults.withCredentials = true
 
 export async function getHomeFeeds(): Promise<Feed[]> {
@@ -19,6 +18,12 @@ export async function getShareFeeds(feedID: number): Promise<Feed[]> {
 
 export async function getGroupFeeds(groupID: number): Promise<Feed[]> {
   const url = API_URL + `/group-feeds?id=${groupID}`
+  const res = await axios.get(url)
+  return res.data
+}
+
+export async function getUserFeeds(userID: string): Promise<Feed[]> {
+  const url = API_URL + `/user-feeds?id=${userID}`
   const res = await axios.get(url)
   return res.data
 }

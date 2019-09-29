@@ -35,6 +35,11 @@ export default new Router({
           path: '/search/:text',
           name: 'search-result',
           component: () => import('./views/SearchResult.vue')
+        },
+        {
+          path: 'user/:id',
+          name: 'user-details',
+          component: () => import('./views/UserDetails.vue')
         }
       ]
     },

@@ -34,7 +34,7 @@ import { State, Mutation } from 'vuex-class'
 import Navbar from '@/components/Navbar.vue'
 import Sidebar from '@/components/Sidebar.vue'
 import { Route, RawLocation } from 'vue-router'
-import { getUser } from '@/apis/authentication'
+import { getSessionUser } from '@/apis/authentication'
 import User from '@/models/user'
 import { NextFunction } from '@/models/vue-api'
 import { Group } from '@/models/group'
@@ -80,11 +80,10 @@ export default class MainLayout extends Vue {
 
   async beforeRouteEnter(to: Route, from: Route, next: NextFunction) {
     try {
-      const authUser = await getUser()
+      const authUser = await getSessionUser()
       const groupList = await getGroupsFromUserID()
       next((vm: any) => vm.dataInit(authUser, groupList))
     } catch (err) {
-      console.log(err)
       next('/entry')
     }
   }

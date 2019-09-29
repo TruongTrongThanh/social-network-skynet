@@ -13,7 +13,7 @@
 </template>
 
 <script lang="ts">
-import { Vue, Component } from 'vue-property-decorator'
+import { Vue, Component, Prop } from 'vue-property-decorator'
 import { postComment } from '@/apis/feed'
 import { FeedComment } from '@/models/feed'
 import { State, Mutation } from 'vuex-class'
@@ -21,12 +21,13 @@ import User from '@/models/user'
 
 @Component
 export default class CommentInput extends Vue {
+  @Prop({ type: Number, required: true }) feedId!: number
   @State authUser!: User
 
   content: string = ''
 
   async post() {
-    const id = await postComment(this.$route.params.id as any, this.content)
+    const id = await postComment(this.feedId, this.content)
     const cmt: FeedComment = {
       id,
       originalPoster: this.authUser,
