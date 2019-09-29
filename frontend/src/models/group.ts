@@ -17,5 +17,7 @@ export interface GroupForm {
   intro: string
   description: string
   tags: string[]
+  id?: number
   avatar?: string
+  banner?: string
 }

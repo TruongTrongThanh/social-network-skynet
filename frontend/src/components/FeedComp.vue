@@ -17,7 +17,11 @@
         <div class="d-flex align-items-center">
           <img :src="feed.originalPoster.avatar || require('@/assets/empty-avatar.png')" class="avatar rounded mr-2">
           <div>
-            <div class="fullname">{{ feed.originalPoster.fullname }}</div>
+            <div class="fullname"
+              @click.stop="moveToUserPage(feed.originalPoster.id)"
+            >
+              {{ feed.originalPoster.fullname }}
+            </div>
             <div class="tag-list">
               <span v-for="t in feed.tags" :key="t" class="badge badge-pill badge-info mr-1" v-text="t"/>
             </div>
@@ -146,7 +150,11 @@ export default class FeedComp extends Mixins(CalcTimeMixin) {
   }
 
   moveToGroupPage(id: number) {
-    this.$router.push({ name: 'group-details', params: { id: String(id) }})
+    this.$router.push({ name: 'group-details', params: { id: String(id) } })
+  }
+
+  moveToUserPage(id: string) {
+    this.$router.push({ name: 'user-details', params: { id } })
   }
 
   created() {

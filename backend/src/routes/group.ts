@@ -1,27 +1,23 @@
 import * as Router from 'koa-router'
-import { GroupBase64Form, GroupURLForm } from '../models/group'
+import { GroupForm } from '../models/group'
 import { upload } from '../services/storage'
 import * as shortID from 'short-uuid'
-import { createGroup, getGroupsFromUserID, getTagsFromGroup, getGroupDetails, joinGroup, leaveGroup } from '../services/group'
+import { createGroup, getGroupsFromUserID, getTagsFromGroup, getGroupDetails, joinGroup, leaveGroup, updateGroup } from '../services/group'
+import { JwtPayload } from '../models/authentication'
 
 const router = new Router()
 
 router.post('/group', async ctx => {
   ctx.assert(ctx.state.user, 401)
 
-  const rawForm: GroupBase64Form = ctx.request.body
-  const urlForm: GroupURLForm = rawForm
+  const form: GroupForm = ctx.request.body
 
-  if (rawForm.avatar) {
-    const avatar = Buffer.from(rawForm.avatar.split(',')[1], 'base64')
-    urlForm.avatarURL = await upload(avatar, `group/${shortID.generate()}.jpg`)
-  }
-  if (rawForm.banner) {
-    const banner = Buffer.from(rawForm.banner.split(',')[1], 'base64')
-    urlForm.bannerURL = await upload(banner, `group/${shortID.generate()}.jpg`)
+  if (form.avatar) {
+    const avatar = Buffer.from(form.avatar.split(',')[1], 'base64')
+    form.avatar = await upload(avatar, `group/${shortID.generate()}.jpg`)
   }
 
-  ctx.body = await createGroup(urlForm, ctx.state.user.id)
+  ctx.body = await createGroup(form, ctx.state.user.id)
   ctx.status = 200
 })
 
@@ -59,5 +55,25 @@ router.post('/group-member', async ctx => {
   ctx.status = 200
 })
 
+router.post('/update-group', async ctx => {
+  ctx.assert(ctx.state.user, 401)
+
+  const sessionUser: JwtPayload = ctx.state.user
+  const form: GroupForm = ctx.request.body
+
+  const isAdmin = sessionUser.roles.find(role => +role.group_id === +form.id).role === 'admin'
+  ctx.assert(isAdmin, 401)
+
+  if (form.avatar && !form.avatar.startsWith('http')) {
+    const avatar = Buffer.from(form.avatar.split(',')[1], 'base64')
+    form.avatar = await upload(avatar, `group/${shortID.generate()}.jpg`)
+  }
+  if (form.banner && !form.banner.startsWith('http')) {
+    const banner = Buffer.from(form.banner.split(',')[1], 'base64')
+    form.banner = await upload(banner, `group/${shortID.generate()}.jpg`)
+  }
+  await updateGroup(form)
+  ctx.status = 200
+})
 
 export default router.routes()

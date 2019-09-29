@@ -12,7 +12,7 @@ export interface RegisterForm {
 }
 
 export interface GroupRole {
-  groupID: number
+  group_id: number
   role: 'admin' | 'member'
 }
 

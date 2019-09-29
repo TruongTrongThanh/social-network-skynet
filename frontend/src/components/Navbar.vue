@@ -24,7 +24,7 @@
           >
             Nhà của tôi
           </router-link>
-          <a class="dropdown-item" href="#">Tùy chỉnh trang cá nhân</a>
+          <router-link to="/settings" class="dropdown-item">Tùy chỉnh thông tin</router-link>
           <div class="dropdown-divider"></div>
           <a class="dropdown-item" href="#" @click="out">Đăng xuất</a>
         </div>

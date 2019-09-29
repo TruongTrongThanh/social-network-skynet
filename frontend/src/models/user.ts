@@ -9,6 +9,6 @@ export default interface User {
   follow?: User[]
   followers?: User[]
   groups?: Group[]
-  createdAt?: Date
-  modifiedAt?: Date
+  createdAt?: string
+  modifiedAt?: string
 }

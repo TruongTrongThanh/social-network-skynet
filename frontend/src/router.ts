@@ -40,6 +40,11 @@ export default new Router({
           path: 'user/:id',
           name: 'user-details',
           component: () => import('./views/UserDetails.vue')
+        },
+        {
+          path: '/settings',
+          name: 'user-settings',
+          component: () => import('./views/UserSettings.vue')
         }
       ]
     },

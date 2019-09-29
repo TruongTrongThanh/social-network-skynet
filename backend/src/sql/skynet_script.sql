@@ -283,7 +283,7 @@ ALTER FUNCTION public.get_feeds_from_user(userid character varying) OWNER TO pos
 -- Name: get_group(integer); Type: FUNCTION; Schema: public; Owner: postgres
 --
 
-CREATE FUNCTION public.get_group(group_id_input integer) RETURNS TABLE(id integer, avatar character varying, banner character varying, name character varying, intro character varying, description text, "memberList" jsonb)
+CREATE FUNCTION public.get_group(group_id_input integer) RETURNS TABLE(id integer, avatar character varying, banner character varying, name character varying, intro character varying, description text, "memberList" jsonb, tags character varying[])
     LANGUAGE sql
     AS $$SELECT
 	id,
@@ -301,7 +301,9 @@ CREATE FUNCTION public.get_group(group_id_input integer) RETURNS TABLE(id intege
 		LEFT JOIN "Group_User" ON "Group_User".user_id = "User".id
 		WHERE group_id = group_id_input
 	) AS users)
-	AS "memberList"
+	AS "memberList",
+	(SELECT array(SELECT name FROM "Tag" WHERE "Tag".group_ids @> Array[id])) 
+	AS tags
 FROM "Group"
 WHERE id = group_id_input
 $$;
@@ -313,11 +315,11 @@ ALTER FUNCTION public.get_group(group_id_input integer) OWNER TO postgres;
 -- Name: get_user_details(character varying); Type: FUNCTION; Schema: public; Owner: postgres
 --
 
-CREATE FUNCTION public.get_user_details(user_id_input character varying) RETURNS TABLE(id character varying, avatar character varying, fullname character varying, "createdAt" date, "feedCount" bigint, "cmtCount" bigint)
+CREATE FUNCTION public.get_user_details(user_id_input character varying) RETURNS TABLE(id character varying, avatar character varying, fullname character varying, "position" character varying, "createdAt" date, "feedCount" bigint, "cmtCount" bigint)
     LANGUAGE sql
     AS $$
 	SELECT 
-		id, avatar, fullname, created_at AS "createdAt",
+		id, avatar, fullname, position, created_at AS "createdAt",
 		(SELECT count("Feed".id) FROM "Feed" WHERE original_poster_id = "User".id)
 		AS "feedCount",
 		(
@@ -369,6 +371,39 @@ $$;
 
 
 ALTER FUNCTION public.searching(user_text_input character varying) OWNER TO postgres;
+
+--
+-- Name: update_group(integer, character varying, character varying, character varying, character varying, character varying, character varying[]); Type: PROCEDURE; Schema: public; Owner: postgres
+--
+
+CREATE PROCEDURE public.update_group(id_input integer, avatar_input character varying, banner_input character varying, name_input character varying, intro_input character varying, description_input character varying, tags_input character varying[])
+    LANGUAGE plpgsql
+    AS $$
+BEGIN
+UPDATE public."Group"
+SET 
+	avatar = avatar_input,
+	banner = banner_input,
+	name = name_input,
+	intro = intro_input, 
+	description = description_input
+WHERE id = id_input;
+
+DELETE FROM "Tag" WHERE group_ids @> Array[id_input];
+
+FOR i IN 1..array_length(tags_input, 1) LOOP
+	INSERT INTO public."Tag"(name, group_ids)
+	VALUES (tags_input[i], ARRAY[id_input])
+	ON CONFLICT (name)
+	DO UPDATE
+		SET group_ids = array_append(public."Tag".group_ids, id_input);
+END LOOP;
+
+COMMIT;
+END;$$;
+
+
+ALTER PROCEDURE public.update_group(id_input integer, avatar_input character varying, banner_input character varying, name_input character varying, intro_input character varying, description_input character varying, tags_input character varying[]) OWNER TO postgres;
 
 --
 -- Name: vietnamese_hunspell; Type: TEXT SEARCH DICTIONARY; Schema: public; Owner: postgres
@@ -725,6 +760,7 @@ thanh22@gmail.com	test 34	\N	2019-09-26 17:58:36.48	17	47	\N
 thanh22@gmail.com	test	\N	2019-09-27 23:41:30.243	18	46	\N
 thanh22@gmail.com	wqfqfqw	\N	2019-09-28 03:26:55.305	19	47	\N
 thanh22@gmail.com	test agasga	\N	2019-09-28 03:28:11.996	20	47	\N
+thanh22@gmail.com	test 15	\N	2019-09-30 00:12:00.979	21	47	\N
 \.
 
 
@@ -752,7 +788,7 @@ COPY public."FeedVote" (feed_id, user_id, vote_state) FROM stdin;
 --
 
 COPY public."Group" (id, avatar, banner, intro, name, description, ts_tokens) FROM stdin;
-46	\N	\N	intro đây là một thú vị bàn về C# và Microsoft	Cộng đồng hỗ trợ giúp đỡ các ứng dụng ASP.NET	Đây là cộng đồng giúp đỡ bạn xây dựng ứng dụng C# thế nào cho hợp lý.\nBàn luận về các design patterns.	'asp.net':10 'bàn':17,39 'bạn':28 'c':19,33 'c/c++' 'cho':36 'các':7,42 'cộng':1,24 'design':43 'dụng':9,32 'dựng':30 'giúp':5,26 'hỗ':3 'hợp':37 'intro':11 'luận':40 'là':13,23 'lý':38 'microsoft':21 'một':14 'nào':35 'pattern':44 'thú':15 'thế':34 'trợ':4 'unreal' 'và':20 'về':18,41 'vị':16 'xâi':29 'đâi':12,22 'đồng':2,25 'đỡ':6,27 'ứng':8,31
+46	\N	http://localhost:3000/files/group/v5japwDeStKmNEBR5rpL55.jpg	Đây là một cộng đồng thú vị bàn về C# và Microsoft. \nTest lại.	Cộng đồng hỗ trợ giúp đỡ các ứng dụng ASP.NET	Đây là cộng đồng giúp đỡ bạn xây dựng ứng dụng C# thế nào cho hợp lý.\nBàn luận về các design patterns.\nsau khi chỉnh lại	'asp.net':10 'bàn':17,39 'bạn':28 'c':19,33 'c/c++' 'cho':36 'các':7,42 'cộng':1,24 'design':43 'dụng':9,32 'dựng':30 'giúp':5,26 'hỗ':3 'hợp':37 'intro':11 'luận':40 'là':13,23 'lý':38 'microsoft':21 'một':14 'nào':35 'pattern':44 'thú':15 'thế':34 'trợ':4 'unreal' 'và':20 'về':18,41 'vị':16 'xâi':29 'đâi':12,22 'đồng':2,25 'đỡ':6,27 'ứng':8,31
 47	http://localhost:3000/files/group/wvsVJk6k9TUwTTti6CLe5T.jpg	\N	Hỏi đáp về xây dựng game nói chung và Unreal framework nói riêng	Cộng đồng làm game Unreal framework	Bạn nên vào đây để được support tận răng.\nMọi thứ khó hiểu liên quan tới Blender, Maya, Unreal đều có thể hỏi ở đây.	'blender':36 'bạn':20 'chung':14 'có':40 'cộng':1 'dựng':11 'framework':6,17 'game':4,12 'hiểu':32 'hỏi':7,42 'java' 'khó':31 'liên':33 'làm':3 'maya':37 'mọi':29 'nên':21 'nói':13,18 'quan':34 'riêng':19 'răng':28 'spring' 'support':26 'thể':41 'thứ':30 'tận':27 'tới':35 'unreal':5,16,38 'và':15 'vào':22 'về':9 'xâi':10 'đáp':8 'đâi':23,44 'được':25 'đều':39 'để':24 'đồng':2 'ở':43
 \.
 
@@ -808,10 +844,11 @@ asva	{43,44,45}	\N
 c	\N	{4}
 c++	\N	{5}
 unity	\N	{5}
-c/c++	{46}	{7,9,12,13,16,18}
-unreal	{46}	{7,9,12,13,16,18}
-spring	{47}	{8,10,11,14,17,19,20}
-java	{47}	{4,8,10,11,14,17,19,20}
+C#	{46}	\N
+ASP.NET	{46}	\N
+Microsoft	{46}	\N
+spring	{47}	{8,10,11,14,17,19,20,21}
+java	{47}	{4,8,10,11,14,17,19,20,21}
 \.
 
 
@@ -820,11 +857,11 @@ java	{47}	{4,8,10,11,14,17,19,20}
 --
 
 COPY public."User" (id, fullname, password, avatar, created_at, modified_at, "position", ts_tokens, refresh_token) FROM stdin;
-thanh22@gmail.com	Võ Hồng Gay	$2b$10$csTROne/ciw8AxK2EnwRH.ckP6c1pHRte.YW.tCsizxFEAbl/euXO	\N	2019-09-24	2019-09-24	Java Developer	'develop':5 'gay':3 'hồng':2 'java':4 'võ':1	\N
-thanh21@gmail.com	Trương Trọng Thanh	$2b$10$SE9xLi1Dfn7cDsxqRCHKYO8bGMYe0YF3NCW1OfokS9qGv4pJOcYoS	\N	2019-09-08	2019-09-08	Intern Developer	'develop':5 'intern':4 'thanh':3 'trương':1 'trọng':2	\N
 thanh24@gmail.com	Hồ Quý Ly	$2b$10$xUiwGgjPnkUDBZb.wnt.oukedfTE9vPvmk.Ryft6.15WbFRSO5awa	\N	2019-09-29	2019-09-29	\N	\N	\N
 thanh25@gmail.com	Lý Công Công	$2b$10$b6YysiyaOZ9jXaGn8NqiTu6ZnDkkW6VKJBC5kU5Ay1sP6zETtkFC2	\N	2019-09-29	2019-09-29	\N	\N	205d312a332a24cf577d17e59b3a85b24530d7d98e89ef80bc93cbfe8801b2c3
 thanh23@gmail.com	Trương Hoàng Lý	$2b$10$xVpYECqLYRLyASTNnLr30u1nMgQdI/dpk04gbn2HDl.Xb9NJXgvK2	\N	2019-09-29	2019-09-29	\N	\N	eee6d7a2344cefe86d551056a41da7ee30ad8c44d4059dafdfa5c1b93c898d52
+thanh21@gmail.com	Trương Trọng Thanh	$2b$10$SE9xLi1Dfn7cDsxqRCHKYO8bGMYe0YF3NCW1OfokS9qGv4pJOcYoS	\N	2019-09-08	2019-09-08	Intern Developer	'develop':5 'intern':4 'thanh':3 'trương':1 'trọng':2	dfaa5a5cbc2753697f610429b7198d19114aa6260b58420409598870290b0bbd
+thanh22@gmail.com	Võ Hồng Gay	$2b$10$csTROne/ciw8AxK2EnwRH.ckP6c1pHRte.YW.tCsizxFEAbl/euXO	\N	2019-09-24	2019-09-24	Java Developer	'develop':5 'gay':3 'hồng':2 'java':4 'võ':1	8fdb1f689d702e5c8449245454c131450adf93d7390708ad4e778b61f6f5a7f5
 \.
 
 
@@ -839,7 +876,7 @@ SELECT pg_catalog.setval('public."Comment_id_seq"', 32, true);
 -- Name: Feed_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public."Feed_id_seq"', 20, true);
+SELECT pg_catalog.setval('public."Feed_id_seq"', 21, true);
 
 
 --

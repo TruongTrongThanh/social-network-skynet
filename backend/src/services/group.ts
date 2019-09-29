@@ -1,11 +1,17 @@
 import PB from '../database'
-import { Group, GroupURLForm } from '../models/group'
+import { Group, GroupForm } from '../models/group'
 
-export async function createGroup(form: GroupURLForm, userID: string): Promise<number> {
+export async function createGroup(form: GroupForm, userID: string): Promise<number> {
   const query = `CALL public.create_group($1, $2, $3, $4, $5, $6, 0);`
-  const params = [form.avatarURL, form.name, form.intro, form.description, form.tags, userID]
+  const params = [form.avatar, form.name, form.intro, form.description, form.tags, userID]
   const res = await PB.query(query, params)
   return res.rows[0].returning_id
+}
+
+export async function updateGroup(form: GroupForm) {
+  const query = `CALL public.update_group($1, $2, $3, $4, $5, $6, $7);`
+  const params = [form.id, form.avatar, form.banner, form.name, form.intro, form.description, form.tags]
+  await PB.query(query, params)
 }
 
 export async function getGroupsFromUserID(userID: string): Promise<Group[]> {

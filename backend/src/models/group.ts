@@ -18,14 +18,8 @@ export interface GroupForm {
   intro: string
   description: string
   tags: string[]
-}
-
-export interface GroupBase64Form extends GroupForm {
+  id?: number
   avatar?: string
   banner?: string
 }
 
-export interface GroupURLForm extends GroupForm {
-  avatarURL?: string
-  bannerURL?: string
-}

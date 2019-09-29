@@ -10,6 +10,11 @@ export async function createGroup(form: GroupForm): Promise<number> {
   return res.data
 }
 
+export async function updateGroup(form: GroupForm) {
+  const url = API_URL + '/update-group'
+  await axios.post(url, form)
+}
+
 export async function getGroupsFromUserID(): Promise<Group[]> {
   const url = API_URL + '/group?type=follow'
   const res = await axios.get(url)
