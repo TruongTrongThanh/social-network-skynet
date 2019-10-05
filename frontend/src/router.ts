@@ -40,11 +40,6 @@ export default new Router({
           path: 'user/:id',
           name: 'user-details',
           component: () => import('./views/UserDetails.vue')
-        },
-        {
-          path: '/settings',
-          name: 'user-settings',
-          component: () => import('./views/UserSettings.vue')
         }
       ]
     },
@@ -52,6 +47,16 @@ export default new Router({
       path: '/entry',
       name: 'entry',
       component: () => import('./views/Entry.vue')
+    },
+    {
+      path: '/change-password',
+      name: 'change-password',
+      component: () => import('./views/ChangePassword.vue')
+    },
+    {
+      path: '/activate-email',
+      name: 'activate-email',
+      component: () => import('./views/ActivateEmail.vue')
     }
   ]
 })

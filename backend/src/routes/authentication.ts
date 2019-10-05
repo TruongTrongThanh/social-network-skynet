@@ -13,7 +13,7 @@ router.post('/register', async ctx => {
 
 router.post('/login', async ctx => {
   const token = await Auth.login(ctx.request.body)
-  ctx.assert(token, 400)
+  ctx.assert(token, 401)
   const options: Cookies.SetOption = {
     httpOnly: true
   }

@@ -3,6 +3,10 @@ import { Group } from './group'
 export default interface User {
   id?: string
   fullname: string
+  position: string
+  isActivated: boolean
+  email?: string
+  tmpEmail?: string
   hashPassword?: string
   avatar?: string
   follow?: User[]
@@ -14,3 +18,4 @@ export default interface User {
   feedCount?: number
   cmtCount?: number
 }
+

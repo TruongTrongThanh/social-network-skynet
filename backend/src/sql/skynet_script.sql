@@ -681,7 +681,11 @@ CREATE TABLE public."User" (
     modified_at date NOT NULL,
     "position" character varying(50),
     ts_tokens tsvector,
-    refresh_token character varying
+    refresh_token character varying,
+    email character varying(100),
+    activate_token character varying(200),
+    is_activated boolean NOT NULL,
+    tmp_email character varying(100)
 );
 
 
@@ -779,6 +783,7 @@ COPY public."FeedShare" (user_id, feed_id, content) FROM stdin;
 COPY public."FeedVote" (feed_id, user_id, vote_state) FROM stdin;
 5	thanh22@gmail.com	\N
 4	thanh22@gmail.com	\N
+8	thanh21@gmail.com	\N
 4	thanh21@gmail.com	\N
 \.
 
@@ -856,12 +861,12 @@ java	{47}	{4,8,10,11,14,17,19,20,21}
 -- Data for Name: User; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-COPY public."User" (id, fullname, password, avatar, created_at, modified_at, "position", ts_tokens, refresh_token) FROM stdin;
-thanh24@gmail.com	Hồ Quý Ly	$2b$10$xUiwGgjPnkUDBZb.wnt.oukedfTE9vPvmk.Ryft6.15WbFRSO5awa	\N	2019-09-29	2019-09-29	\N	\N	\N
-thanh25@gmail.com	Lý Công Công	$2b$10$b6YysiyaOZ9jXaGn8NqiTu6ZnDkkW6VKJBC5kU5Ay1sP6zETtkFC2	\N	2019-09-29	2019-09-29	\N	\N	205d312a332a24cf577d17e59b3a85b24530d7d98e89ef80bc93cbfe8801b2c3
-thanh23@gmail.com	Trương Hoàng Lý	$2b$10$xVpYECqLYRLyASTNnLr30u1nMgQdI/dpk04gbn2HDl.Xb9NJXgvK2	\N	2019-09-29	2019-09-29	\N	\N	eee6d7a2344cefe86d551056a41da7ee30ad8c44d4059dafdfa5c1b93c898d52
-thanh21@gmail.com	Trương Trọng Thanh	$2b$10$SE9xLi1Dfn7cDsxqRCHKYO8bGMYe0YF3NCW1OfokS9qGv4pJOcYoS	\N	2019-09-08	2019-09-08	Intern Developer	'develop':5 'intern':4 'thanh':3 'trương':1 'trọng':2	dfaa5a5cbc2753697f610429b7198d19114aa6260b58420409598870290b0bbd
-thanh22@gmail.com	Võ Hồng Gay	$2b$10$csTROne/ciw8AxK2EnwRH.ckP6c1pHRte.YW.tCsizxFEAbl/euXO	\N	2019-09-24	2019-09-24	Java Developer	'develop':5 'gay':3 'hồng':2 'java':4 'võ':1	8fdb1f689d702e5c8449245454c131450adf93d7390708ad4e778b61f6f5a7f5
+COPY public."User" (id, fullname, password, avatar, created_at, modified_at, "position", ts_tokens, refresh_token, email, activate_token, is_activated, tmp_email) FROM stdin;
+thanh24@gmail.com	Hồ Quý Ly	$2b$10$xUiwGgjPnkUDBZb.wnt.oukedfTE9vPvmk.Ryft6.15WbFRSO5awa	\N	2019-09-29	2019-09-29	\N	\N	\N	\N	\N	f	\N
+thanh25@gmail.com	Lý Công Công	$2b$10$b6YysiyaOZ9jXaGn8NqiTu6ZnDkkW6VKJBC5kU5Ay1sP6zETtkFC2	\N	2019-09-29	2019-09-29	\N	\N	205d312a332a24cf577d17e59b3a85b24530d7d98e89ef80bc93cbfe8801b2c3	\N	\N	f	\N
+thanh21@gmail.com	Trương Trọng Thanh	$2b$10$SE9xLi1Dfn7cDsxqRCHKYO8bGMYe0YF3NCW1OfokS9qGv4pJOcYoS	http://localhost:3000/files/avatar/5a2cGuVr8dy6P1D2bESnjw.jpg	2019-09-08	2019-09-08	Senior Vue Developer	'develop':5 'intern':4 'thanh':3 'trương':1 'trọng':2	d7f687994a842b44b75b52171c575c9084962bb783dd49bd0ddd0754559cda4a	trongthanh2198@gmail.com	812ddf6985102e22fde5548aacf62d76baf26c96fb29ee59690ce592ea0a9a14	t	trongthanh2198@gmail.com
+thanh22@gmail.com	Võ Hồng Gay	$2b$10$csTROne/ciw8AxK2EnwRH.ckP6c1pHRte.YW.tCsizxFEAbl/euXO	\N	2019-09-24	2019-09-24	Java Developer	'develop':5 'gay':3 'hồng':2 'java':4 'võ':1	8fdb1f689d702e5c8449245454c131450adf93d7390708ad4e778b61f6f5a7f5	\N	\N	f	\N
+thanh23@gmail.com	Trương Hoàng Lý	$2b$10$xVpYECqLYRLyASTNnLr30u1nMgQdI/dpk04gbn2HDl.Xb9NJXgvK2	\N	2019-09-29	2019-09-29	\N	\N	eee6d7a2344cefe86d551056a41da7ee30ad8c44d4059dafdfa5c1b93c898d52	\N	\N	f	\N
 \.
 
 

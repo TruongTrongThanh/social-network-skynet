@@ -8,7 +8,7 @@
       <div class="trending sticky-top col-3">
         <popular-lang class="mb-3"/>
         <famous class="mb-2"/>
-        <div class="copyright text-muted">&copy; {{ new Date().getFullYear() }} Skynet, Open University. All rights reserved</div>
+        <Copyright/>
       </div>
     </div>
   </div>
@@ -22,12 +22,14 @@ import FeedList from '@/components/FeedList.vue'
 import { Feed } from '@/models/feed'
 import { getHomeFeeds, getFeedDetail } from '@/apis/feed'
 import FeedWrapper from '@/components/FeedWrapper.vue'
+import Copyright from '@/components/Copyright.vue'
 
 @Component({
   components: {
     Famous,
     PopularLang,
-    FeedList
+    FeedList,
+    Copyright
   }
 })
 export default class Home extends Vue {
@@ -44,10 +46,6 @@ export default class Home extends Vue {
 .home {
   .trending {
     top: $topOffset;
-  }
-
-  .copyright {
-    font-size: 0.9rem;
   }
 }
 </style>
