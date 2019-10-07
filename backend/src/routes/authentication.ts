@@ -2,11 +2,17 @@
 import * as Router from 'koa-router'
 import * as Auth from '../services/authentication'
 import Cookies = require('cookies')
-import { generateRefreshToken } from '../services/user'
+import { RegisterForm } from '../models/authentication'
 
 const router = new Router()
 
 router.post('/register', async ctx => {
+  const form: RegisterForm = ctx.request.body
+
+  ctx.assert(form.username, 400, 'Bạn chưa nhập username.')
+  ctx.assert(form.password, 400, 'Bạn chưa nhập password.')
+  if (form.username.length > 50) ctx.throw('Username không được quá 50 kí tự.')
+
   await Auth.register(ctx.request.body)
   ctx.status = 200
 })
@@ -26,7 +32,7 @@ router.post('/login', async ctx => {
 
 router.post('/logout', async ctx => {
   ctx.assert(ctx.state.user, 400)
-  await generateRefreshToken(ctx.state.user.id)
+  await Auth.generateRefreshToken(ctx.state.user.id)
 
   const options: Cookies.SetOption = {
     expires: new Date()

@@ -7,6 +7,7 @@ export default interface User {
   isActivated: boolean
   email?: string
   tmpEmail?: string
+  password?: string
   hashPassword?: string
   avatar?: string
   follow?: User[]

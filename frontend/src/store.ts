@@ -4,6 +4,7 @@ import User from '@/models/user'
 import { Group } from '@/models/group'
 import { Feed } from '@/models/feed'
 import { getFeedDetail } from './apis/feed'
+import { ModalOptions, ModalResult } from './models/modal'
 
 Vue.use(Vuex)
 
@@ -13,6 +14,8 @@ export interface RootState {
   followingGroups: Group[]
   clickedFeed: Feed | null
   clickedShareFeed: Feed | null
+  modalTrigger: boolean
+  modalOptions: ModalOptions
 }
 
 export default new Vuex.Store<RootState>({
@@ -21,7 +24,13 @@ export default new Vuex.Store<RootState>({
     authUser: null,
     followingGroups: [],
     clickedFeed: null,
-    clickedShareFeed: null
+    clickedShareFeed: null,
+    modalTrigger: false,
+    modalOptions: {
+      title: 'Thông báo',
+      type: 'primary',
+      showPasswordForm: false
+    }
   },
 
   getters: {
@@ -60,7 +69,7 @@ export default new Vuex.Store<RootState>({
         id: val.id,
         avatar: val.avatar,
         name: val.name,
-        role: 'member',
+        role: val.role || 'member',
         tags: [],
         memberList: []
       })
@@ -74,6 +83,10 @@ export default new Vuex.Store<RootState>({
     },
     setClickedShareFeed(state, val: Feed) {
       state.clickedShareFeed = val
+    },
+    triggerModal(state, options: ModalOptions) {
+      state.modalOptions = options
+      state.modalTrigger = !state.modalTrigger
     }
   },
 

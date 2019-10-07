@@ -7,13 +7,13 @@
       <div class="col">
         <div @click.stop="moveToGroupPage(feed.group.id)" class="clickable">
           <span v-if="isInnerSharedFeed" class="group-name mr-2">Crosspost từ</span>
-          <img :src="require('@/assets/empty-avatar.png')" class="group-avatar mr-2" width="30">
+          <img :src="feed.group.avatar || require('@/assets/empty-avatar.png')" class="group-avatar mr-2" width="30">
           <span class="group-name">{{ feed.group.name }}</span>
         </div>
       </div>
     </div>
     <div class="title row justify-content-between pt-2">
-      <div class="col-4">
+      <div class="col-8">
         <div class="d-flex align-items-center">
           <img :src="feed.originalPoster.avatar || require('@/assets/empty-avatar.png')" class="avatar rounded mr-2">
           <div>

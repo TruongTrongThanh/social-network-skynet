@@ -12,6 +12,11 @@ router.post('/group', async ctx => {
 
   const form: GroupForm = ctx.request.body
 
+  ctx.assert(form.name, 400)
+  ctx.assert(form.intro, 400)
+  ctx.assert(form.tags, 400)
+  ctx.assert(form.description, 400)
+
   if (form.avatar) {
     const avatar = Buffer.from(form.avatar.split(',')[1], 'base64')
     form.avatar = await upload(avatar, `group/${shortID.generate()}.jpg`)

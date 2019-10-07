@@ -1,7 +1,11 @@
 <template>
-  <li class="search-entity list-group-item d-flex justify-content-between align-items-center">
+  <router-link
+    :to="{ name: type === 'user' ? 'user-details' : 'group-details', params: { id: entity.id } }"
+    tag="li"
+    class="search-entity list-group-item d-flex justify-content-between align-items-center clickable raise-color"
+  >
     <div class="left d-flex">
-      <img :src="entity.avatar || require('@/assets/empty-avatar.png')" class="rounded" width="50">
+      <img :src="entity.avatar || require('@/assets/empty-avatar.png')" class="rounded avatar">
       <div class="info ml-2">
         <div v-if="type === 'user'" class="name">{{ entity.fullname }}</div>
         <div v-else class="name">{{ entity.name }}</div>
@@ -12,10 +16,10 @@
       </div>
     </div>
     <div class="right">
-      <img v-if="type === 'user'" :src="require('@/assets/empty-avatar.png')" width="40">
-      <img v-else :src="require('@/assets/icons/group-btn-icon.png')" width="40">
+      <UserSVG v-if="type === 'user'" class="entity-type"/>
+      <img v-else :src="require('@/assets/icons/group-btn-icon.png')" class="entity-type">
     </div>
-  </li>
+  </router-link>
 </template>
 
 <script lang="ts">
@@ -23,8 +27,13 @@ import { Vue, Component, Prop } from 'vue-property-decorator'
 import { SearchEntity } from '@/models/search'
 import { Group } from '@/models/group'
 import User from '@/models/user'
+import UserSVG from '@/assets/user.svg'
 
-@Component
+@Component({
+  components: {
+    UserSVG
+  }
+})
 export default class SearchEntityComp extends Vue {
   @Prop({ type: Object, required: true }) readonly data!: SearchEntity
 
@@ -39,12 +48,24 @@ export default class SearchEntityComp extends Vue {
     font-size: 14px;
   }
 
+  .avatar {
+    width: 50px;
+    height: 50px;
+    object-fit: cover;
+  }
+
   .tag {
     font-size: 13px;
     padding-top: 2px;
     padding-bottom: 2px;
     background-color: #72bc73;
     color: white;
+  }
+
+  .entity-type {
+    width: 40px;
+    height: 40px;
+    object-fit: cover;
   }
 }
 </style>

@@ -7,16 +7,6 @@
       :route="{ name: 'group-create' }"
       class="pl-3 py-2"
     />
-    <bullet
-      :img-src="require('@/assets/icons/group-btn-icon.png')"
-      :name="'Thông báo'"
-      :route="{ name: 'group-create' }"
-      class="pl-3 py-2"
-    >
-      <div class="badge badge-pill badge-danger ml-2">
-        2
-      </div>
-    </bullet>
     <div v-if="adminGroups.length > 0" class="admin-groups">
       <hr>
       <div class="ml-3 text-muted">Cộng đồng quản trị</div>

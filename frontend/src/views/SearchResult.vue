@@ -28,10 +28,6 @@ export default class SearchResult extends Vue {
     this.setEntities()
   }
 
-  async beforeUpdate() {
-    this.setEntities()
-  }
-
   async setEntities() {
     const res = await searchPeople(this.$route.params.text as string)
     Vue.set(this, 'entities', res)

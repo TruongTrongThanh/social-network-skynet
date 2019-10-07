@@ -1,22 +1,14 @@
 import { Pool } from 'pg'
+import * as fs from 'fs'
 
 const PB = new Pool()
 
 export default PB
 
 export function databaseInit() {
-  const query = `CREATE TABLE IF NOT EXISTS public."User"
-  (
-      id character varying(50) COLLATE pg_catalog."default" NOT NULL,
-      fullname character varying(50) COLLATE pg_catalog."default" NOT NULL,
-      password character varying(100) COLLATE pg_catalog."default" NOT NULL,
-      avatar character varying(200) COLLATE pg_catalog."default",
-      "createdAt" date NOT NULL,
-      "modifiedAt" date NOT NULL,
-      CONSTRAINT "User_pkey" PRIMARY KEY (id)
-  )`
+  const query = fs.readFileSync('./sql/skynet_script.sql').toString()
   PB.query(query, (err, res) => {
     if (err) throw err
-    console.log('CREATE DATABASE: User')
+    console.log('DATABASE INIT COMPLETE')
   })
 }

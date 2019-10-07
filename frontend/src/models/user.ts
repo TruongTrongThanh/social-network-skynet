@@ -5,6 +5,7 @@ export default interface User {
   fullname: string
   position: string
   isActivated: boolean
+  password?: string
   role?: string
   email?: string
   avatar?: string

@@ -49,14 +49,18 @@ export default new Router({
       component: () => import('./views/Entry.vue')
     },
     {
-      path: '/change-password',
-      name: 'change-password',
-      component: () => import('./views/ChangePassword.vue')
+      path: '/reset-password',
+      name: 'reset-password',
+      component: () => import('./views/ResetPassword.vue')
     },
     {
       path: '/activate-email',
       name: 'activate-email',
       component: () => import('./views/ActivateEmail.vue')
+    },
+    {
+      path: '*',
+      component: () => import('./views/NotFound.vue')
     }
   ]
 })

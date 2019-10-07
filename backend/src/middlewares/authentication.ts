@@ -1,7 +1,7 @@
 import * as Koa from 'koa'
-import { getIdentityFromJWT, signNewJWT } from '../services/authentication'
+import { getIdentityFromJWT, signNewJWT, getUserIDFromRefreshToken } from '../services/authentication'
 import { TokenExpiredError } from 'jsonwebtoken'
-import { getUserGroupRoles, getUserIDFromRefreshToken } from '../services/user'
+import { getUserGroupRoles } from '../services/user'
 import Cookies = require('cookies')
 
 export default async function auth(ctx: Koa.ParameterizedContext<any, {}>, next: () => Promise<any>) {

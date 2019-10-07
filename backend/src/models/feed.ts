@@ -29,10 +29,10 @@ export interface FeedComment {
 }
 
 export interface FeedForm {
-  content: string
-  image: string
   groupID: string
   tags: string[]
+  content?: string
+  image?: string
   imageURL?: string
   shareFromFeedID?: number
 }

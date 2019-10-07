@@ -1,5 +1,5 @@
 <template>
-  <div v-if="group" class="group-details container px-0">
+  <div v-if="group" class="group-details container px-0 mb-4">
     <div class="row">
       <div class="col position-relative">
         <div
@@ -92,25 +92,6 @@
             >
               Members
             </a>
-          </li>
-        </ul>
-      </div>
-      <div class="col">
-        <ul class="group-tabs nav nav-pills justify-content-end">
-          <li class="nav-item dropdown">
-            <a
-              class="nav-link dropdown-toggle rounded-0"
-              data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false"
-            >
-              Notifcation
-            </a>
-            <div class="dropdown-menu dropdown-menu-right">
-              <a class="dropdown-item d-flex justify-content-between" href="#">
-                <div class="font-weight-bold">Always</div>
-                <div>&#10070;</div>
-              </a>
-              <a class="dropdown-item" href="#">Never</a>
-            </div>
           </li>
         </ul>
       </div>
@@ -256,7 +237,7 @@ export default class GroupDetails extends Vue {
   }
 
   get defaultBanner(): string {
-    return 'https://i0.wp.com/ericasadun.com/wp-content/uploads/2013/04/f.png?ssl=1'
+    return require('@/assets/empty-banner.png')
   }
 
   updateFeedList(f: Feed) {
@@ -339,6 +320,7 @@ $avatar-memberlist-size: 51px;
       width: $avatar-size;
       height: $avatar-size;
       border: 5px solid white;
+      object-fit: cover;
     }
   }
 

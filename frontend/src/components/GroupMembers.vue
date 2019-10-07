@@ -12,7 +12,7 @@
       </li>
     </ul>
     <h5 class="font-weight-bold mt-3">Thành viên</h5>
-    <ul class="list-group">
+    <ul v-if="members.length > 0" class="list-group">
       <li
         v-for="user in members"
         :key="user.id"
@@ -22,6 +22,7 @@
         <div class="ml-2">{{ user.fullname }}</div>
       </li>
     </ul>
+    <div v-else class="alert alert-primary">Không có thành viên nào.</div>
   </div>
 </template>
 

@@ -1,6 +1,12 @@
 <template>
   <form @submit.prevent="()=>{}" class="group-form container-fluid">
     <div class="row">
+      <div class="col">
+        <div v-show="form.name.length > 0 && !isValidName" class="alert alert-danger">Tên cộng đồng không được dài hơn 50 ký tự!</div>
+        <div v-show="form.intro.length > 0 && !isValidIntro" class="alert alert-danger">Giới thiệu chỉ gói gọn dưới 1000 từ!</div>
+      </div>
+    </div>
+    <div class="row">
       <div class="col-8">
         <div class="form-group">
           <label for="name">Tên cộng đồng</label>
@@ -9,7 +15,7 @@
             type="text"
             class="form-control"
             id="name"
-            placeholder="Tên không được quá 30 kí tự..."
+            placeholder="Tên không được quá 50 kí tự..."
           >
         </div>
         <div class="form-group">
@@ -18,7 +24,7 @@
             v-model="form.intro"
             class="form-control"
             id="intro"
-            placeholder="Lời giới thiệu không được quá 100 kí tự..."
+            placeholder="Lời giới thiệu không được quá 1000 kí tự..."
           >
           </textarea>
         </div>
@@ -33,6 +39,7 @@
           <label for="tags-input">Gắn tag cho cộng đồng</label>
           <tags-input
             :data.sync="form.tags"
+            :place-holder="'Số lượng tag bắt buộc từ 1 tới 3...'"
           />
         </div>
         <div class="form-group">
@@ -44,9 +51,15 @@
             placeholder="Cho mọi người hiểu rõ hơn về cộng đồng của bạn!"
             rows="7"
           />
-          <button type="button" class="btn btn-lg btn-block btn-outline-success px-5 mt-4" @click="submit">
+          <LoadingButton
+            type="button"
+            class="btn-lg btn-block btn-outline-success px-5 mt-4"
+            :is-loading="isProcessing"
+            :disabled="!isGoodToSubmit"
+            @click="submit"
+          >
             Thành lập cộng đồng mới!
-          </button>
+          </LoadingButton>
         </div>
       </div>
     </div>
@@ -57,16 +70,21 @@
 import { Vue, Component } from 'vue-property-decorator'
 import AvatarUpload from '@/components/AvatarUpload.vue'
 import TagsInput from '@/components/TagsInput.vue'
-import { GroupForm } from '@/models/group'
+import { GroupForm, Group } from '@/models/group'
 import { createGroup } from '@/apis/group'
+import LoadingButton from '@/components/LoadingButton.vue'
+import { Mutation } from 'vuex-class'
 
 @Component({
   components: {
     AvatarUpload,
-    TagsInput
+    TagsInput,
+    LoadingButton
   }
 })
 export default class GroupFormComp extends Vue {
+  @Mutation readonly addFollowingGroup!: (g: Group) => void
+
   form: GroupForm = {
     name: '',
     intro: '',
@@ -74,10 +92,32 @@ export default class GroupFormComp extends Vue {
     tags: [],
     avatar: ''
   }
+  isProcessing: boolean = false
+
+  get isValidName(): boolean {
+    return this.form.name.length < 50
+  }
+  get isValidIntro(): boolean {
+    return this.form.intro.length < 1000
+  }
+  get isValidTags(): boolean {
+    return this.form.tags.length > 0 && this.form.tags.length < 5
+  }
+  get isGoodToSubmit(): boolean {
+    return this.isValidName && this.isValidIntro && this.isValidTags
+  }
 
   async submit() {
+    this.isProcessing = true
     const res = await createGroup(this.form)
-    console.log(res)
+    this.isProcessing = false
+    this.addFollowingGroup({
+      id: res,
+      name: this.form.name,
+      role: 'admin',
+      tags: this.form.tags,
+      memberList: []
+    })
     this.$router.push({ name: 'group-details', params: { id: res.toString() } })
   }
 }

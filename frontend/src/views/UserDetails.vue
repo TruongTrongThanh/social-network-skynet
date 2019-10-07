@@ -55,18 +55,18 @@
         </div>
         <div class="info p-3 mt-3 rounded">
           <div
-            v-if="userInfo.id === authUser.id"
-            class="title py-2 border-bottom d-flex justify-content-between"
+            v-if="isHomeUser"
+            class="title py-2 border-bottom"
           >
-            <div>Mật khẩu</div>
-            <div class="text-muted">Thay đổi</div>
+            Mật khẩu
           </div>
-          <div v-if="userInfo.id === authUser.id">************</div>
+          <input v-if="isEditing && isHomeUser" v-model="userInfo.password" type="password" class="form-control">
+          <div v-else-if="isHomeUser">************</div>
 
           <div class="title py-2 mt-1 border-bottom">Địa chỉ email</div>
-          <input v-if="isEditing" v-model="authUser.email" type="text" class="form-control">
-          <div v-else-if="authUser.email" class="d-flex align-items-center">
-            <div>{{ authUser.email }}</div>
+          <input v-if="isEditing" v-model="userInfo.email" type="text" class="form-control">
+          <div v-else-if="userInfo.email" class="d-flex align-items-center">
+            <div>{{ userInfo.email }}</div>
             <SuccessIcon v-if="authUser.isActivated" class="status-icon text-success ml-1"/>
             <WarningIcon v-else class="status-icon text-danger ml-2"/>
           </div>
@@ -92,10 +92,12 @@ import User from '@/models/user'
 import { Feed } from '@/models/feed'
 import { getUserFeeds } from '@/apis/feed'
 import { updateUser } from '@/apis/user'
-import { State } from 'vuex-class'
+import { State, Mutation } from 'vuex-class'
 import LoadingButton from '@/components/LoadingButton.vue'
 import WarningIcon from '@/assets/icons/warning-icon.svg'
 import SuccessIcon from '@/assets/icons/success-icon.svg'
+import { ModalOptions, ModalResult } from '@/models/modal'
+import { AxiosError } from 'axios'
 
 @Component({
   components: {
@@ -107,11 +109,21 @@ import SuccessIcon from '@/assets/icons/success-icon.svg'
 })
 export default class UserDetails extends Vue {
   @State readonly authUser!: User
+  @State readonly modalResult!: ModalResult
+  @Mutation readonly triggerModal!: (opts: ModalOptions) => void
 
   userInfo: User | null = null
   feeds: Feed[] = []
   isEditing: boolean = false
   editLoading: boolean = false
+  oldUserJSON: string = ''
+
+  get userIsChanged(): boolean {
+    return this.oldUserJSON !== JSON.stringify(this.userInfo)
+  }
+  get isHomeUser(): boolean {
+    return this.userInfo!.id === this.authUser.id
+  }
 
   async created() {
     const userID = this.$route.params.id
@@ -120,7 +132,9 @@ export default class UserDetails extends Vue {
 
     const [user, feeds] = await Promise.all([userPromise, feedPromise])
     this.userInfo = user
+    this.userInfo!.email = this.authUser.email
     this.feeds = feeds
+    this.oldUserJSON = JSON.stringify(this.userInfo)
   }
 
   get userJoinDate(): string {
@@ -133,18 +147,55 @@ export default class UserDetails extends Vue {
   }
 
   async editClicked() {
-    if (this.isEditing) {
-      this.editLoading = true
-      try {
-        this.userInfo!.email = this.authUser.email
+    if (this.isEditing && this.userIsChanged) {
+      // Email or password are changed
+      if (this.userInfo!.password && this.userInfo!.password !== ''
+      || this.userInfo!.email !== this.authUser.email) {
+        const updateUserCallback = async (res: ModalResult) => {
+          if (res.result === 'ok') {
+            this.editLoading = true
+            try {
+              await updateUser(this.userInfo!, res.content)
+              this.editLoading = false
+            } catch (err) {
+              this.editLoading = false
+              const axiosErr: AxiosError<any> = err
+              if (axiosErr.response && axiosErr.response.status === 401) {
+                this.callUnauthorizedModal()
+              } else throw err
+            }
+          }
+          this.isEditing = false
+        }
+        this.triggerModal({
+          title: 'Nhập mật khẩu',
+          content: 'Khi thay đổi email hoặc password, bạn cần nhập mật khẩu hiện tại.',
+          type: 'danger',
+          showPasswordForm: true,
+          callback: updateUserCallback
+        })
+      // Email and password are not changed
+      } else {
+        this.editLoading = true
         await updateUser(this.userInfo!)
-      } catch (err) {
         this.editLoading = false
-        throw err
+        this.isEditing = false
       }
+    } else {
+      this.isEditing = !this.isEditing
     }
-    this.editLoading = false
-    this.isEditing = !this.isEditing
+  }
+
+  callUnauthorizedModal() {
+    // setTimeout de tranh bi trung modal khi loi xay ra o callback modal
+    setTimeout(() => {
+      this.triggerModal({
+        title: 'Mật khẩu không chính xác',
+        content: 'Mật khẩu bạn vừa nhập không chính xác, vui lòng thử lại.',
+        type: 'danger',
+        removeOkButton: true
+      })
+    }, 500)
   }
 
   avatarChanged(event: any) {

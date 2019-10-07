@@ -68,7 +68,4 @@ export default class FeedList extends Vue {
 .feed-list-enter-to {
   background-color: none;
 }
-.raise-border:hover {
-  border: 1px solid #979797;
-}
 </style>

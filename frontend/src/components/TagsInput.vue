@@ -110,7 +110,7 @@ export default class TagsInput extends Vue {
   .tag-input {
     background: none;
     border: none;
-    width: 100px;
+    width: 250px;
   }
 }
 </style>
