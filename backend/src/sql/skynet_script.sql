@@ -62,8 +62,13 @@ CREATE PROCEDURE public.create_group(avatar character varying, group_name charac
     LANGUAGE plpgsql
     AS $$
 BEGIN
-INSERT INTO public."Group"(avatar, name, intro, description)
-VALUES (avatar, group_name, intro, description)
+INSERT INTO public."Group"(avatar, name, intro, description, ts_tokens)
+VALUES (avatar, group_name, intro, description,
+	   	to_tsvector(group_name) || 
+		to_tsvector(intro) || 
+		to_tsvector(description) ||
+		array_to_tsvector(tags)
+	   )
 RETURNING id INTO returning_id;
 
 FOR i IN 1..array_length(tags, 1) LOOP
@@ -386,7 +391,12 @@ SET
 	banner = banner_input,
 	name = name_input,
 	intro = intro_input, 
-	description = description_input
+	description = description_input,
+	ts_tokens = 
+		to_tsvector(name_input) || 
+		to_tsvector(intro_input) || 
+		to_tsvector(description_input) ||
+		array_to_tsvector(tags_input)
 WHERE id = id_input;
 
 DELETE FROM "Tag" WHERE group_ids @> Array[id_input];
@@ -574,7 +584,7 @@ CREATE TABLE public."Group" (
     id integer NOT NULL,
     avatar character varying(100),
     banner character varying(100),
-    intro character varying(200) NOT NULL,
+    intro character varying(1000) NOT NULL,
     name character varying(100) NOT NULL,
     description text,
     ts_tokens tsvector
@@ -685,7 +695,7 @@ CREATE TABLE public."User" (
     email character varying(100),
     activate_token character varying(200),
     is_activated boolean NOT NULL,
-    tmp_email character varying(100)
+    pass_token character varying(200)
 );
 
 
@@ -717,185 +727,6 @@ ALTER TABLE ONLY public."Group" ALTER COLUMN id SET DEFAULT nextval('public."Gro
 --
 
 ALTER TABLE ONLY public."Reply" ALTER COLUMN id SET DEFAULT nextval('public."Reply_id_seq"'::regclass);
-
-
---
--- Data for Name: Comment; Type: TABLE DATA; Schema: public; Owner: postgres
---
-
-COPY public."Comment" (id, feed_id, content, user_id, created_at) FROM stdin;
-22	4	asgagq	thanh22@gmail.com	2019-09-25 01:00:42.844
-23	4	test	thanh22@gmail.com	2019-09-25 01:00:49.441
-24	4	test	thanh22@gmail.com	2019-09-26 16:42:58.595
-25	4	test 2	thanh22@gmail.com	2019-09-26 16:43:12.847
-26	4	test 1	thanh22@gmail.com	2019-09-26 16:44:40.48
-27	4	test 1	thanh22@gmail.com	2019-09-26 16:47:36.716
-28	4	test asdga	thanh22@gmail.com	2019-09-26 16:47:51.937
-31	5	test	thanh21@gmail.com	2019-09-29 17:15:00.565
-32	5	test 2	thanh21@gmail.com	2019-09-29 17:15:06.219
-\.
-
-
---
--- Data for Name: CommentVote; Type: TABLE DATA; Schema: public; Owner: postgres
---
-
-COPY public."CommentVote" (comment_id, user_id, vote_state) FROM stdin;
-\.
-
-
---
--- Data for Name: Feed; Type: TABLE DATA; Schema: public; Owner: postgres
---
-
-COPY public."Feed" (original_poster_id, content, image, created_at, id, group_id, share_from_feed_id) FROM stdin;
-thanh22@gmail.com	new feed test.. test testing testing	\N	2019-09-24 21:56:17.4447	4	47	\N
-thanh22@gmail.com	test bài đăng số 001...\namdgklag...\nasfazvgfa	http://localhost:3000/files/feed/wvsVJk6k9TUwTTti6CLe5T.jpg	2019-09-24 23:12:39.532	5	46	\N
-thanh22@gmail.com	đây là feed chia sẻ	\N	2019-09-26 03:16:49.267	7	46	4
-thanh21@gmail.com	đây là feed chia sẻ 2..	\N	2019-09-26 04:32:52.684	8	47	5
-thanh22@gmail.com	test feed bài mới	\N	2019-09-26 17:17:17.141	9	46	\N
-thanh22@gmail.com	test	\N	2019-09-26 17:46:43.1	10	47	\N
-thanh22@gmail.com	test 2	\N	2019-09-26 17:51:41.082	11	47	\N
-thanh22@gmail.com	wqfqwfq	\N	2019-09-26 17:52:42.485	12	46	\N
-thanh22@gmail.com	real-time update	\N	2019-09-26 17:53:18.912	13	46	\N
-thanh22@gmail.com	test abna	\N	2019-09-26 17:55:42.567	14	47	\N
-thanh22@gmail.com	test thứ 2	\N	2019-09-26 17:56:13.052	16	46	\N
-thanh22@gmail.com	test 34	\N	2019-09-26 17:58:36.48	17	47	\N
-thanh22@gmail.com	test	\N	2019-09-27 23:41:30.243	18	46	\N
-thanh22@gmail.com	wqfqfqw	\N	2019-09-28 03:26:55.305	19	47	\N
-thanh22@gmail.com	test agasga	\N	2019-09-28 03:28:11.996	20	47	\N
-thanh22@gmail.com	test 15	\N	2019-09-30 00:12:00.979	21	47	\N
-\.
-
-
---
--- Data for Name: FeedShare; Type: TABLE DATA; Schema: public; Owner: postgres
---
-
-COPY public."FeedShare" (user_id, feed_id, content) FROM stdin;
-\.
-
-
---
--- Data for Name: FeedVote; Type: TABLE DATA; Schema: public; Owner: postgres
---
-
-COPY public."FeedVote" (feed_id, user_id, vote_state) FROM stdin;
-5	thanh22@gmail.com	\N
-4	thanh22@gmail.com	\N
-8	thanh21@gmail.com	\N
-4	thanh21@gmail.com	\N
-\.
-
-
---
--- Data for Name: Group; Type: TABLE DATA; Schema: public; Owner: postgres
---
-
-COPY public."Group" (id, avatar, banner, intro, name, description, ts_tokens) FROM stdin;
-46	\N	http://localhost:3000/files/group/v5japwDeStKmNEBR5rpL55.jpg	Đây là một cộng đồng thú vị bàn về C# và Microsoft. \nTest lại.	Cộng đồng hỗ trợ giúp đỡ các ứng dụng ASP.NET	Đây là cộng đồng giúp đỡ bạn xây dựng ứng dụng C# thế nào cho hợp lý.\nBàn luận về các design patterns.\nsau khi chỉnh lại	'asp.net':10 'bàn':17,39 'bạn':28 'c':19,33 'c/c++' 'cho':36 'các':7,42 'cộng':1,24 'design':43 'dụng':9,32 'dựng':30 'giúp':5,26 'hỗ':3 'hợp':37 'intro':11 'luận':40 'là':13,23 'lý':38 'microsoft':21 'một':14 'nào':35 'pattern':44 'thú':15 'thế':34 'trợ':4 'unreal' 'và':20 'về':18,41 'vị':16 'xâi':29 'đâi':12,22 'đồng':2,25 'đỡ':6,27 'ứng':8,31
-47	http://localhost:3000/files/group/wvsVJk6k9TUwTTti6CLe5T.jpg	\N	Hỏi đáp về xây dựng game nói chung và Unreal framework nói riêng	Cộng đồng làm game Unreal framework	Bạn nên vào đây để được support tận răng.\nMọi thứ khó hiểu liên quan tới Blender, Maya, Unreal đều có thể hỏi ở đây.	'blender':36 'bạn':20 'chung':14 'có':40 'cộng':1 'dựng':11 'framework':6,17 'game':4,12 'hiểu':32 'hỏi':7,42 'java' 'khó':31 'liên':33 'làm':3 'maya':37 'mọi':29 'nên':21 'nói':13,18 'quan':34 'riêng':19 'răng':28 'spring' 'support':26 'thể':41 'thứ':30 'tận':27 'tới':35 'unreal':5,16,38 'và':15 'vào':22 'về':9 'xâi':10 'đáp':8 'đâi':23,44 'được':25 'đều':39 'để':24 'đồng':2 'ở':43
-\.
-
-
---
--- Data for Name: Group_User; Type: TABLE DATA; Schema: public; Owner: postgres
---
-
-COPY public."Group_User" (group_id, user_id, role) FROM stdin;
-46	thanh21@gmail.com	admin
-46	thanh22@gmail.com	member
-47	thanh22@gmail.com	member
-47	thanh21@gmail.com	member
-\.
-
-
---
--- Data for Name: Reply; Type: TABLE DATA; Schema: public; Owner: postgres
---
-
-COPY public."Reply" (id, comment_id, content, user_id, created_at) FROM stdin;
-9	22	test reply	thanh22@gmail.com	2019-09-26 14:37:52.008
-10	27	reply test	thanh22@gmail.com	2019-09-26 16:51:18.36
-11	27	reply test 3	thanh22@gmail.com	2019-09-26 17:11:47.782
-12	27	reply test 4	thanh22@gmail.com	2019-09-26 17:12:32.521
-13	27	reply test 5	thanh22@gmail.com	2019-09-26 17:12:43.981
-14	27	reply test 6	thanh22@gmail.com	2019-09-26 17:13:37.623
-15	27	asfgaga	thanh22@gmail.com	2019-09-26 17:13:57.19
-\.
-
-
---
--- Data for Name: Tag; Type: TABLE DATA; Schema: public; Owner: postgres
---
-
-COPY public."Tag" (name, group_ids, feed_ids) FROM stdin;
-tag11	{27,28}	\N
-tag22	{27,28}	\N
-tag333	{27,28}	\N
-xz	{29}	\N
-zxz	{29}	\N
-tag abs	{31,32,33}	\N
-atag zz	{32,33}	\N
-abc	{29,33}	\N
-asdg	{35,36,37,38,39}	\N
-asga	{36,37,38,39}	\N
-zxva	{37,38,39}	\N
-asfaf	{40}	\N
-wqfqw	{42,43,44,45}	\N
-zxcz	{43,44,45}	\N
-zxvc	{43,44,45}	\N
-asva	{43,44,45}	\N
-c	\N	{4}
-c++	\N	{5}
-unity	\N	{5}
-C#	{46}	\N
-ASP.NET	{46}	\N
-Microsoft	{46}	\N
-spring	{47}	{8,10,11,14,17,19,20,21}
-java	{47}	{4,8,10,11,14,17,19,20,21}
-\.
-
-
---
--- Data for Name: User; Type: TABLE DATA; Schema: public; Owner: postgres
---
-
-COPY public."User" (id, fullname, password, avatar, created_at, modified_at, "position", ts_tokens, refresh_token, email, activate_token, is_activated, tmp_email) FROM stdin;
-thanh24@gmail.com	Hồ Quý Ly	$2b$10$xUiwGgjPnkUDBZb.wnt.oukedfTE9vPvmk.Ryft6.15WbFRSO5awa	\N	2019-09-29	2019-09-29	\N	\N	\N	\N	\N	f	\N
-thanh25@gmail.com	Lý Công Công	$2b$10$b6YysiyaOZ9jXaGn8NqiTu6ZnDkkW6VKJBC5kU5Ay1sP6zETtkFC2	\N	2019-09-29	2019-09-29	\N	\N	205d312a332a24cf577d17e59b3a85b24530d7d98e89ef80bc93cbfe8801b2c3	\N	\N	f	\N
-thanh21@gmail.com	Trương Trọng Thanh	$2b$10$SE9xLi1Dfn7cDsxqRCHKYO8bGMYe0YF3NCW1OfokS9qGv4pJOcYoS	http://localhost:3000/files/avatar/5a2cGuVr8dy6P1D2bESnjw.jpg	2019-09-08	2019-09-08	Senior Vue Developer	'develop':5 'intern':4 'thanh':3 'trương':1 'trọng':2	d7f687994a842b44b75b52171c575c9084962bb783dd49bd0ddd0754559cda4a	trongthanh2198@gmail.com	812ddf6985102e22fde5548aacf62d76baf26c96fb29ee59690ce592ea0a9a14	t	trongthanh2198@gmail.com
-thanh22@gmail.com	Võ Hồng Gay	$2b$10$csTROne/ciw8AxK2EnwRH.ckP6c1pHRte.YW.tCsizxFEAbl/euXO	\N	2019-09-24	2019-09-24	Java Developer	'develop':5 'gay':3 'hồng':2 'java':4 'võ':1	8fdb1f689d702e5c8449245454c131450adf93d7390708ad4e778b61f6f5a7f5	\N	\N	f	\N
-thanh23@gmail.com	Trương Hoàng Lý	$2b$10$xVpYECqLYRLyASTNnLr30u1nMgQdI/dpk04gbn2HDl.Xb9NJXgvK2	\N	2019-09-29	2019-09-29	\N	\N	eee6d7a2344cefe86d551056a41da7ee30ad8c44d4059dafdfa5c1b93c898d52	\N	\N	f	\N
-\.
-
-
---
--- Name: Comment_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
---
-
-SELECT pg_catalog.setval('public."Comment_id_seq"', 32, true);
-
-
---
--- Name: Feed_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
---
-
-SELECT pg_catalog.setval('public."Feed_id_seq"', 21, true);
-
-
---
--- Name: Group_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
---
-
-SELECT pg_catalog.setval('public."Group_id_seq"', 47, true);
-
-
---
--- Name: Reply_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
---
-
-SELECT pg_catalog.setval('public."Reply_id_seq"', 15, true);
 
 
 --
