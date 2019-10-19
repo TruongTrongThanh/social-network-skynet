@@ -6,7 +6,7 @@
         class="col-6 mr-5"
       />
       <div class="trending sticky-top col-3">
-        <popular-lang class="mb-3"/>
+        <popular-tags class="mb-3"/>
         <famous class="mb-2"/>
         <Copyright/>
       </div>
@@ -17,7 +17,7 @@
 <script lang="ts">
 import { Vue, Component } from 'vue-property-decorator'
 import Famous from '@/components/Famous.vue'
-import PopularLang from '@/components/PopularLang.vue'
+import PopularTags from '@/components/PopularTags.vue'
 import FeedList from '@/components/FeedList.vue'
 import { Feed } from '@/models/feed'
 import { getHomeFeeds, getFeedDetail } from '@/apis/feed'
@@ -27,7 +27,7 @@ import Copyright from '@/components/Copyright.vue'
 @Component({
   components: {
     Famous,
-    PopularLang,
+    PopularTags,
     FeedList,
     Copyright
   }

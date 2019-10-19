@@ -10,6 +10,12 @@ export async function getUserDetails(userID: string): Promise<User> {
   return res.data
 }
 
+export async function getTopUsers(): Promise<User[]> {
+  const url = API_URL + '/top-users'
+  const res = await axios.get(url)
+  return res.data
+}
+
 export async function updateUser(data: User, authPassword?: string) {
   const url = API_URL + `/update-user`
   await axios.post(url, { user: data, authPassword })

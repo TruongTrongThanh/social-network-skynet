@@ -32,7 +32,7 @@
         <router-link :to="{ name: 'feed', params: { id: feed.id } }" class="time">{{ calcTime }}</router-link>
       </div>
     </div>
-    <div class="content row" v-text="feed.content"/>
+    <div class="content row py-2 px-0"><CodeSyntaxRender class="col-12" :data="feed.content"/></div>
     <div v-if="feed.image" class="image row">
       <div class="col">
         <img
@@ -110,12 +110,14 @@ import { voteFeed } from '@/apis/feed'
 import socketIO from '@/apis/socket'
 import { State, Mutation } from 'vuex-class'
 import User from '@/models/user'
+import CodeSyntaxRender from '@/components/CodeSyntaxRender.vue'
 
 @Component({
   components: {
     DownArrow,
     Comment,
-    Share
+    Share,
+    CodeSyntaxRender
   }
 })
 export default class FeedComp extends Mixins(CalcTimeMixin) {

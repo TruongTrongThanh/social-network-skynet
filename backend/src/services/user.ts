@@ -39,12 +39,12 @@ export async function updateUser(user: User) {
   const query = `
     UPDATE "User"
     SET
-      fullname = $1,
+      fullname = $1::varchar,
       avatar = $2,
-      position = $3,
+      position = $3::varchar,
       email = $4,
       password = COALESCE($5, password),
-      ts_tokens = to_tsvector(fullname) || to_tsvector(position)
+      ts_tokens = to_tsvector($1) || to_tsvector($3)
     WHERE id = $6;
   `
   const params = [user.fullname, user.avatar, user.position, user.email, hashedPass, user.id]
@@ -67,7 +67,14 @@ export async function getIDAndActivateStateFromEmail(email: string): Promise<str
   const query = `SELECT id, is_activated AS "isActivated" FROM "User" WHERE email = $1`
   const params = [email]
   const res = await PB.query(query, params)
-  console.log(email)
   if (res.rows.length > 0) return [res.rows[0].id, res.rows[0].isActivated]
   else return [null, null]
+}
+
+export async function getTopUsers(): Promise<User[]> {
+  const query = `SELECT * FROM get_user_stats() as stats
+    ORDER BY stats."feedCount" DESC, stats."cmtCount" DESC
+    LIMIT 3`
+  const res = await PB.query(query)
+  return res.rows
 }

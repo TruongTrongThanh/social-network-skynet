@@ -1,5 +1,6 @@
 import axios from 'axios'
 import { Feed, FeedVoteNumber, FeedForm } from '@/models/feed'
+import { Tag } from '@/models/tag'
 
 const API_URL = process.env.VUE_APP_SERVER_API
 axios.defaults.withCredentials = true
@@ -30,6 +31,12 @@ export async function getUserFeeds(userID: string): Promise<Feed[]> {
 
 export async function getFeedDetail(feedID: number): Promise<Feed> {
   const url = API_URL + `/feed?id=${feedID}`
+  const res = await axios.get(url)
+  return res.data
+}
+
+export async function getPopularFeedTags(): Promise<Tag[]> {
+  const url = API_URL + '/top-feed-tags'
   const res = await axios.get(url)
   return res.data
 }

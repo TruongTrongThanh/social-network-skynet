@@ -1,22 +1,31 @@
 <template>
   <ul class="famous-people list-group list-group-flush">
     <li
-      v-for="x in 5"
-      :key="x"
-      class="list-group-item list-group-item-action clickable px-2 pb-3"
+      v-for="u in users"
+      :key="u.id"
+      class="list-group-item list-group-item-action d-flex align-items-start clickable px-2 pb-3"
     >
-      <img src="https://www.w3schools.com/howto/img_avatar.png" class="mr-2" width="30">
-      <span class="name">Bill Gates</span>
-      <span class="role float-right">C# Developer</span>
+      <img :src="u.avatar || require('@/assets/empty-avatar.png')" class="mr-2 rounded-circle" width="30">
+      <div>
+        <div class="name">{{ u.fullname }}</div>
+        <div class="role">{{ u.position }}</div>
+      </div>
     </li>
   </ul>
 </template>
 
 <script lang="ts">
 import { Vue, Component } from 'vue-property-decorator'
+import { getTopUsers } from '@/apis/user'
+import User from '@/models/user'
 
 @Component
-export default class FamousPeople extends Vue {}
+export default class FamousPeople extends Vue {
+  users: User[] = []
+  async created() {
+    this.users = await getTopUsers()
+  }
+}
 </script>
 
 <style scoped lang="scss">

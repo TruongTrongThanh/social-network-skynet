@@ -6,7 +6,7 @@ import { databaseInit } from './database'
 import * as path from 'path'
 
 const app = new Koa()
-databaseInit()
+// databaseInit()
 const server = http.createServer(app.callback())
 const io = socketInit(server)
 

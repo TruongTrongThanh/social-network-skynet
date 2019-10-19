@@ -7,6 +7,7 @@ import axios, { AxiosError } from 'axios'
 import 'popper.js'
 import 'bootstrap'
 import 'bootstrap/dist/css/bootstrap.min.css'
+import 'highlight.js/styles/default.css'
 
 Vue.config.productionTip = false
 

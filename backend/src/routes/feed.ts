@@ -1,5 +1,5 @@
 import * as Router from 'koa-router'
-import { getHomeFeeds, getFeed, postFeed, vote, getVote, postComment, postReply, getShareFeeds, getGroupFeeds, getUserFeeds } from '../services/feed'
+import { getHomeFeeds, getFeed, postFeed, vote, getVote, postComment, postReply, getShareFeeds, getGroupFeeds, getUserFeeds, getPopularFeedTags } from '../services/feed'
 import {  FeedVote, FeedForm, FeedCommentForm, CommentReplyForm } from '../models/feed'
 import { getSocketIO } from '../socket'
 import { upload } from '../services/storage'
@@ -42,6 +42,11 @@ router.get('/feed', async ctx => {
   ctx.status = 200
 })
 
+router.get('/top-feed-tags', async ctx => {
+  ctx.body = await getPopularFeedTags()
+  ctx.status = 200
+})
+
 router.post('/feed', async ctx => {
   ctx.assert(ctx.state.user, 401)
   const form: FeedForm = ctx.request.body
@@ -66,6 +71,7 @@ router.post('/feed/vote', async ctx => {
   const feedNumber = await getVote(feedVote.feedID)
   feedNumber.voteState = feedVote.voteState
   feedNumber.userID = ctx.state.user.id
+  // Sau khi đã cập nhật trạng thái xong, ta gọi hàm emit để thông báo sự kiện
   io.emit(`feed-vote-update-${feedVote.feedID}`, feedNumber)
   ctx.status = 200
 })

@@ -1,5 +1,6 @@
 import PB from '../database'
 import { Feed, FeedVote, FeedForm, FeedVoteNumber, FeedCommentForm, FeedComment, CommentReplyForm } from '../models/feed'
+import { Tag } from '../models/tag'
 
 export async function getHomeFeeds(userID: string): Promise<Feed[]> {
   const query = `SELECT * FROM get_feeds_from_user($1);`
@@ -119,4 +120,10 @@ export async function postReply(userID: string, form: CommentReplyForm): Promise
   const params = [form.commentID, form.content, userID, new Date()]
   const res = await PB.query(query, params)
   return res.rows[0].id
+}
+
+export async function getPopularFeedTags(): Promise<Tag[]> {
+  const query = `select * from get_popular_tags() LIMIT 3`
+  const res = await PB.query(query)
+  return res.rows
 }

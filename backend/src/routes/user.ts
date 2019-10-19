@@ -1,5 +1,5 @@
 import * as Router from 'koa-router'
-import { getSessionUser, getUserDetails, updateUser, getIDAndActivateStateFromEmail, updatePasswordFromPassToken } from '../services/user'
+import { getSessionUser, getUserDetails, updateUser, getIDAndActivateStateFromEmail, updatePasswordFromPassToken, getTopUsers } from '../services/user'
 import User from '../models/user'
 import * as shortID from 'short-uuid'
 import { upload } from '../services/storage'
@@ -18,6 +18,11 @@ router.get('/user', async ctx => {
   ctx.assert(ctx.state.user, 401)
   ctx.assert(ctx.query.id, 400)
   ctx.body = await getUserDetails(ctx.query.id)
+  ctx.status = 200
+})
+
+router.get('/top-users', async ctx => {
+  ctx.body = await getTopUsers()
   ctx.status = 200
 })
 

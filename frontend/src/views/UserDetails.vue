@@ -42,9 +42,8 @@
               <div>Bình luận</div>
             </div>
           </div>
-          <button v-if="userInfo.id !== authUser.id" class="btn btn-success btn-block">Theo dõi</button>
           <LoadingButton
-            v-else
+            v-if="isHomeUser"
             :class="[isEditing ? 'btn-primary' : 'btn-outline-primary']"
             :is-loading="editLoading"
             class="btn-block rounded-pill mt-3 mb-2"
@@ -63,14 +62,14 @@
           <input v-if="isEditing && isHomeUser" v-model="userInfo.password" type="password" class="form-control">
           <div v-else-if="isHomeUser">************</div>
 
-          <div class="title py-2 mt-1 border-bottom">Địa chỉ email</div>
-          <input v-if="isEditing" v-model="userInfo.email" type="text" class="form-control">
-          <div v-else-if="userInfo.email" class="d-flex align-items-center">
+          <div v-if="isHomeUser" class="title py-2 mt-1 border-bottom">Địa chỉ email</div>
+          <input v-if="isEditing && isHomeUser" v-model="userInfo.email" type="text" class="form-control">
+          <div v-else-if="isHomeUser && userInfo.email" class="d-flex align-items-center">
             <div>{{ userInfo.email }}</div>
             <SuccessIcon v-if="authUser.isActivated" class="status-icon text-success ml-1"/>
             <WarningIcon v-else class="status-icon text-danger ml-2"/>
           </div>
-          <div v-else class="text-danger">Bạn chưa thiết lập địa chỉ Email!</div>
+          <div v-else-if="isHomeUser" class="text-danger">Bạn chưa thiết lập địa chỉ Email!</div>
 
           <div class="title py-2 mt-1 border-bottom">Nghề nghiệp</div>
           <input v-if="isEditing" v-model="userInfo.position" type="text" class="form-control">

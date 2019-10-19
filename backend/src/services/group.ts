@@ -63,3 +63,9 @@ export async function leaveGroup(userID: string, groupID: number) {
   const params = [groupID, userID]
   await PB.query(query, params)
 }
+
+export async function getTopGroups(): Promise<Group[]> {
+  const query = `SELECT * FROM get_group_stats() as grp ORDER BY grp."feedCount" DESC, grp."memberCount" DESC LIMIT 3`
+  const res = await PB.query(query)
+  return res.rows
+}

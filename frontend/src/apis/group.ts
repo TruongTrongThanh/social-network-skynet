@@ -33,6 +33,12 @@ export async function getGroupDetails(groupID: number): Promise<Group> {
   return res.data
 }
 
+export async function getTopGroups(): Promise<Group[]> {
+  const url = API_URL + '/top-groups'
+  const res = await axios.get(url)
+  return res.data
+}
+
 export async function setGroupMemberStatus(groupID: number, status: 'join' | 'leave') {
   const url = API_URL + '/group-member'
   const res = await axios.post(url, { id: groupID, status })

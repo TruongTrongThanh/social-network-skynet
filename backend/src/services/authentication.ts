@@ -11,8 +11,8 @@ const JWT_KEY = process.env.JWT_KEY
 export async function register(form: RegisterForm) {
   const hashedPass = bcrypt.hash(form.password, saltRounds)
   const query = `
-    INSERT INTO public."User" (id, fullname, password, created_at, modified_at, ts_tokens)
-    VALUES ($1, $2, $3, $4, $4, to_tsvector($2));
+    INSERT INTO public."User" (id, fullname, password, created_at, modified_at, is_activated, ts_tokens)
+    VALUES ($1, $2::varchar, $3, $4, $4, false, to_tsvector($2));
   `
   const params = [form.username, form.fullname, await hashedPass, new Date()]
   await PB.query(query, params)
@@ -21,6 +21,7 @@ export async function register(form: RegisterForm) {
 export async function login(form: LoginForm): Promise<Token> {
   if (await isRightPassword(form.username, form.password)) {
     let refreshToken: string
+    // Nếu có ghi nhớ đăng nhập, cấp thêm refresh token
     if (form.rememberMe) {
       refreshToken = await generateRefreshToken(form.username)
     }

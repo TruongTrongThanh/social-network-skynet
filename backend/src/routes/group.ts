@@ -2,7 +2,7 @@ import * as Router from 'koa-router'
 import { GroupForm } from '../models/group'
 import { upload } from '../services/storage'
 import * as shortID from 'short-uuid'
-import { createGroup, getGroupsFromUserID, getTagsFromGroup, getGroupDetails, joinGroup, leaveGroup, updateGroup } from '../services/group'
+import { createGroup, getGroupsFromUserID, getTagsFromGroup, getGroupDetails, joinGroup, leaveGroup, updateGroup, getTopGroups } from '../services/group'
 import { JwtPayload } from '../models/authentication'
 
 const router = new Router()
@@ -49,6 +49,11 @@ router.get('/group/tags', async ctx => {
   ctx.status = 200
 })
 
+router.get('/top-groups', async ctx => {
+  ctx.body = await getTopGroups()
+  ctx.status = 200
+})
+
 router.post('/group-member', async ctx => {
   ctx.assert(ctx.state.user, 401)
   ctx.assert(ctx.request.body.id, 400)
@@ -61,11 +66,13 @@ router.post('/group-member', async ctx => {
 })
 
 router.post('/update-group', async ctx => {
+  // Kiểm tra biến tạm trong context, nếu không có thì response 401
   ctx.assert(ctx.state.user, 401)
 
   const sessionUser: JwtPayload = ctx.state.user
   const form: GroupForm = ctx.request.body
 
+  // Kiểm tra quyền của user được lưu trong payload, nếu có đủ thẩm quyền thì được phép tiếp tục
   const isAdmin = sessionUser.roles.find(role => +role.group_id === +form.id).role === 'admin'
   ctx.assert(isAdmin, 401)
 

@@ -119,6 +119,7 @@ export default class FeedInput extends Vue {
       comment: 0,
       createdAt: new Date().toString(),
       commentList: [],
+      image: this.form.image,
       tags: this.form.tags
     }
     this.resetForm()
